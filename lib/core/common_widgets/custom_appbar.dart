@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../theme/app_colors.dart';
 import '../theme/app_styles.dart';
 import '../theme/app_theme.dart';
 import 'icon_buttons.dart';
@@ -35,10 +34,10 @@ class CustomAppBar extends StatelessWidget {
             useBackButton
                 ? IconActionButton(
                     isCircular: true,
-                    backgroundColor: primaryColorLight,
+                    backgroundColor: getSecondaryColor(context),
                     onTap: () => Get.back(),
                     icon: Icons.arrow_back,
-                    color: getTextColor(context),
+                    color: getIconColor(context),
                     size: secondaryIcon(context) * 0.6,
                   )
                 : IconActionButton(
@@ -74,7 +73,7 @@ class CustomAppBar extends StatelessWidget {
                         Text(
                           subtitle,
                           style: (hasTitle
-                              ? bodyMediumStyle(context)
+                              ? bodyLargeStyle(context)
                               : titleBoldMediumStyle(context)),
                         ),
                       ],

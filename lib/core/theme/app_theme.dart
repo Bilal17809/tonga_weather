@@ -49,6 +49,29 @@ BoxDecoration roundedDecor(BuildContext context) => BoxDecoration(
     ),
   ],
 );
+BoxDecoration roundedForecastDecor(BuildContext context) => BoxDecoration(
+  color: isDarkMode(context) ? getSecondaryColor(context) : kWhite,
+  borderRadius: BorderRadius.circular(10),
+);
+
+BoxDecoration roundedStylizedDecor(BuildContext context) => BoxDecoration(
+  color: getSecondaryColor(context),
+  borderRadius: BorderRadius.only(
+    topRight: Radius.circular(24),
+    bottomLeft: Radius.circular(24),
+  ),
+  boxShadow: [
+    BoxShadow(
+      color: isDarkMode(context)
+          ? darkBgColor.withValues(alpha: 0.3)
+          : secondaryColorLight.withValues(alpha: 0.3),
+      blurRadius: 6,
+      spreadRadius: 1,
+      offset: Offset(0, 2),
+    ),
+  ],
+);
+
 BoxDecoration roundedBottomDecor(BuildContext context) => BoxDecoration(
   gradient: LinearGradient(
     begin: Alignment.topLeft,
@@ -142,8 +165,14 @@ Color getBgColor(BuildContext context) =>
 Color getTextColor(BuildContext context) =>
     isDarkMode(context) ? textWhiteColor : textWhiteColor;
 
-Color getSubTextColor(BuildContext context) =>
+Color getTitleTextColor(BuildContext context) =>
     isDarkMode(context) ? textWhiteColor : primaryColorLight;
+
+Color getButtonTextColor(BuildContext context) =>
+    isDarkMode(context) ? kWhite : secondaryColorLight;
+
+Color getSubTextColor(BuildContext context) =>
+    isDarkMode(context) ? textWhiteColor : kBlack;
 
 Color getIconColor(BuildContext context) =>
     isDarkMode(context) ? kWhite : kWhite;
@@ -161,11 +190,11 @@ LinearGradient kGradient(BuildContext context) {
 
 LinearGradient kContainerGradient(BuildContext context) {
   return LinearGradient(
-    begin: Alignment.bottomCenter,
-    end: Alignment.topCenter,
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
     colors: isDarkMode(context)
-        ? [kWhite.withValues(alpha: 0.2), kWhite.withValues(alpha: 0.1)]
-        : [primaryColorLight, Color.fromARGB(80, 73, 129, 232)],
-    stops: [0.3, 0.75],
+        ? [kWhite, kWhite.withValues(alpha: 0.75)]
+        : [primaryColorLight, secondaryColorLight],
+    stops: [0.05, 0.85],
   );
 }

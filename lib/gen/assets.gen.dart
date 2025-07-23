@@ -14,11 +14,12 @@ import 'package:flutter/widgets.dart';
 class Assets {
   const Assets._();
 
+  static const String cities = 'assets/cities.json';
   static const AssetGenImage cloudy = AssetGenImage('assets/cloudy.png');
   static const AssetGenImage homeIcon = AssetGenImage('assets/home_icon.png');
 
   /// List of all assets
-  static List<AssetGenImage> get values => [cloudy, homeIcon];
+  static List<dynamic> get values => [cities, cloudy, homeIcon];
 }
 
 class AssetGenImage {

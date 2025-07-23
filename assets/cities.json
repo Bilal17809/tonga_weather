@@ -1,0 +1,62 @@
+[
+  {
+    "city": "Nukuʻalofa",
+    "cityAscii": "Nukualofa",
+    "latitude": -21.1394,
+    "longitude": -175.2046
+  },
+  {
+    "city": "Neiafu",
+    "cityAscii": "Neiafu",
+    "latitude": -18.6500,
+    "longitude": -173.9833
+  },
+  {
+    "city": "Haveluloto",
+    "cityAscii": "Haveluloto",
+    "latitude": -21.1625,
+    "longitude": -175.2025
+  },
+  {
+    "city": "Vaini",
+    "cityAscii": "Vaini",
+    "latitude": -21.2178,
+    "longitude": -175.2025
+  },
+  {
+    "city": "Houma",
+    "cityAscii": "Houma",
+    "latitude": -21.2297,
+    "longitude": -175.2322
+  },
+  {
+    "city": "Kolonga",
+    "cityAscii": "Kolonga",
+    "latitude": -21.1333,
+    "longitude": -175.0167
+  },
+  {
+    "city": "Tatakamotonga",
+    "cityAscii": "Tatakamotonga",
+    "latitude": -21.1458,
+    "longitude": -175.0667
+  },
+  {
+    "city": "Pangai",
+    "cityAscii": "Pangai",
+    "latitude": -19.8000,
+    "longitude": -174.3500
+  },
+  {
+    "city": "Ohonua",
+    "cityAscii": "Ohonua",
+    "latitude": -21.3333,
+    "longitude": -174.9500
+  },
+  {
+    "city": "Hihifo",
+    "cityAscii": "Hihifo",
+    "latitude": -15.9494,
+    "longitude": -173.7986
+  }
+]

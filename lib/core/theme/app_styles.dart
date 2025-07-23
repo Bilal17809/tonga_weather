@@ -16,8 +16,11 @@ TextStyle headlineMediumStyle(BuildContext context) => TextStyle(
   color: getTextColor(context),
 );
 
-TextStyle headlineSmallStyle(BuildContext context) =>
-    TextStyle(fontSize: 24, fontWeight: FontWeight.w500, color: kWhite);
+TextStyle headlineSmallStyle(BuildContext context) => TextStyle(
+  fontSize: 24,
+  fontWeight: FontWeight.w500,
+  color: getTextColor(context),
+);
 
 TextStyle titleBoldMediumStyle(BuildContext context) => TextStyle(
   fontSize: 20,
@@ -28,7 +31,7 @@ TextStyle titleBoldMediumStyle(BuildContext context) => TextStyle(
 TextStyle titleBoldLargeStyle(BuildContext context) => TextStyle(
   fontSize: 24,
   fontWeight: FontWeight.bold,
-  color: getTextColor(context),
+  color: getTitleTextColor(context),
 );
 
 TextStyle titleSmallStyle(BuildContext context) => TextStyle(
@@ -46,19 +49,19 @@ TextStyle titleSmallBoldStyle(BuildContext context) => TextStyle(
 TextStyle bodyLargeStyle(BuildContext context) => TextStyle(
   fontSize: 16,
   fontWeight: FontWeight.w400,
-  color: getSubTextColor(context),
+  color: getTextColor(context),
 );
 
 TextStyle bodyMediumStyle(BuildContext context) => TextStyle(
   fontSize: 14,
   fontWeight: FontWeight.w400,
-  color: getTextColor(context),
+  color: getSubTextColor(context),
 );
 
 TextStyle bodyBoldMediumStyle(BuildContext context) => TextStyle(
   fontSize: 14,
   fontWeight: FontWeight.bold,
-  color: getTextColor(context),
+  color: getSubTextColor(context),
 );
 
 TextStyle bodyBoldSmallStyle(BuildContext context) => TextStyle(

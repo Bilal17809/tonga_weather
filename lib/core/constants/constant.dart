@@ -12,7 +12,7 @@ const fontSecondary = 'Poppins';
 const double kBodyHp = 16.0;
 const double kElementGap = 12.0;
 const double kElementInnerGap = 8.0;
-const double kElementWidthGap = 6.0;
+const double kElementWidthGap = 10.0;
 const kContentPaddingSmall = EdgeInsets.symmetric(horizontal: 12, vertical: 4);
 const kContentPadding = EdgeInsets.symmetric(horizontal: 16, vertical: 4);
 
