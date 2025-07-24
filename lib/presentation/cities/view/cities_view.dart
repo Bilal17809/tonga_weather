@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:tonga_weather/core/theme/app_theme.dart';
 import 'package:tonga_weather/presentation/cities/view/widgets/city_card.dart';
 import 'package:tonga_weather/presentation/cities/view/widgets/current_location_card.dart';
-
 import '../../../core/common_widgets/custom_appbar.dart';
 import '../../../core/common_widgets/search_bar.dart';
 import '../../../core/constants/constant.dart';
@@ -28,8 +27,7 @@ class CitiesView extends StatelessWidget {
                 final dark = isDarkMode(context);
                 return SearchBarField(
                   controller: controller.searchController,
-                  onSearch: (value) {},
-                  // onSearch: (value) => controller.searchCities(value),
+                  onSearch: (value) => controller.searchCities(value),
                   backgroundColor: dark
                       ? kWhite.withValues(alpha: 0.1)
                       : getPrimaryColor(context),
@@ -78,18 +76,15 @@ class CitiesView extends StatelessWidget {
               child: CurrentLocationCard(controller: controller),
             ),
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.fromLTRB(kBodyHp, 0, kBodyHp, 0),
-                itemCount: 15,
-                // itemCount: controller.filteredCities.length, // Or your actual list length
-                itemBuilder: (BuildContext context, index) {
-                  // final city = controller.filteredCities[index]; // example
-                  return CityCard(
-                    controller: controller,
-                    weather: 'weather',
-                    city: 'city',
-                  );
-                },
+              child: Obx(
+                () => ListView.builder(
+                  padding: const EdgeInsets.fromLTRB(kBodyHp, 0, kBodyHp, 0),
+                  itemCount: controller.filteredCities.length,
+                  itemBuilder: (BuildContext context, index) {
+                    final city = controller.filteredCities[index];
+                    return CityCard(controller: controller, city: city);
+                  },
+                ),
               ),
             ),
           ],

@@ -27,6 +27,7 @@ class OnlineDataSource {
       }
       final homeController = Get.find<HomeController>();
       homeController.rawForecastData.value = data;
+
       final current = WeatherModel.fromForecastJson(data);
       final forecastDays = data['forecast']['forecastday'] as List;
       final forecast = forecastDays

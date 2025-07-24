@@ -26,6 +26,7 @@ const double kCircularBorderRadius = 50.0;
 /// ========== Icon Sizes ==========
 double primaryIcon(BuildContext context) => mobileWidth(context) * 0.24;
 double secondaryIcon(BuildContext context) => mobileWidth(context) * 0.075;
+double mediumIcon(BuildContext context) => mobileWidth(context) * 0.1;
 double smallIcon(BuildContext context) => mobileWidth(context) * 0.06;
 
 /// ========== MediaQuery Helpers ==========

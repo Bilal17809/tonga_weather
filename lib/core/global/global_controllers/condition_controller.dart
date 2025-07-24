@@ -11,10 +11,46 @@ class ConditionController extends GetxController {
   final mainCityIndex = 0.obs;
   final mainCityName = ''.obs;
 
+  // Store raw forecast data for current hour access
+  final rawForecastData = <String, dynamic>{}.obs;
+
   String get temperature {
     return mainCityWeather.value != null
         ? '${mainCityWeather.value!.temperature.round()}'
         : '--';
+  }
+
+  // Get current hour temperature from raw forecast data
+  String get currentHourTemperature {
+    if (rawForecastData.isEmpty) return '--';
+
+    final now = DateTime.now();
+    final today = _getTodayDateKey();
+
+    final forecastDays = rawForecastData['forecast']?['forecastday'];
+    if (forecastDays == null) return '--';
+
+    final todayData = (forecastDays as List).firstWhere(
+      (day) => day['date'] == today,
+      orElse: () => null,
+    );
+
+    if (todayData == null) return '--';
+
+    final hourlyList = todayData['hour'] as List?;
+    if (hourlyList == null) return '--';
+
+    final currentHour = hourlyList.firstWhere((hour) {
+      final hourTime = DateTime.parse(hour['time']);
+      return hourTime.hour == now.hour;
+    }, orElse: () => null);
+
+    if (currentHour != null) {
+      final temp = currentHour['temp_c'];
+      return '${(temp as num).round()}';
+    }
+
+    return '--';
   }
 
   String get condition {
@@ -111,8 +147,34 @@ class ConditionController extends GetxController {
         };
       }).toList();
     }
-
     return [];
+  }
+
+  Map<String, dynamic>? getCurrentHourData() {
+    if (rawForecastData.isEmpty) return null;
+
+    final now = DateTime.now();
+    final today = _getTodayDateKey();
+
+    final forecastDays = rawForecastData['forecast']?['forecastday'];
+    if (forecastDays == null) return null;
+
+    final todayData = (forecastDays as List).firstWhere(
+      (day) => day['date'] == today,
+      orElse: () => null,
+    );
+
+    if (todayData == null) return null;
+
+    final hourlyList = todayData['hour'] as List?;
+    if (hourlyList == null) return null;
+
+    final currentHour = hourlyList.firstWhere((hour) {
+      final hourTime = DateTime.parse(hour['time']);
+      return hourTime.hour == now.hour;
+    }, orElse: () => null);
+
+    return currentHour;
   }
 
   void updateWeatherData(
@@ -145,6 +207,11 @@ class ConditionController extends GetxController {
     }).toList();
   }
 
+  // Update raw forecast data for current hour access
+  void updateRawForecastData(Map<String, dynamic> data) {
+    rawForecastData.value = data;
+  }
+
   String getDayName(String dateString) {
     final date = DateTime.parse(dateString);
     final now = DateTime.now();
@@ -170,5 +237,11 @@ class ConditionController extends GetxController {
     selectedCitiesWeather.clear();
     weeklyForecast.clear();
     mainCityName.value = '';
+    rawForecastData.clear();
+  }
+
+  String _getTodayDateKey() {
+    final now = DateTime.now();
+    return '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
   }
 }

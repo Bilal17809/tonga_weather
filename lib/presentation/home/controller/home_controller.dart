@@ -1,134 +1,182 @@
+import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:tonga_weather/core/global/global_controllers/condition_controller.dart';
+import 'package:tonga_weather/core/global/global_services/connectivity_service.dart';
+import 'package:tonga_weather/core/utils/fetch_current_hour.dart';
 import 'package:tonga_weather/data/model/city_model.dart';
-
+import '../../splash/controller/splash_controller.dart';
 import '../../../core/local_storage/local_storage.dart';
-import '../../../core/utils/date_time_util.dart';
 import '../../../domain/use_cases/get_current_weather.dart';
-import '../../../gen/assets.gen.dart';
 
-class HomeController extends GetxController {
+class HomeController extends GetxController with ConnectivityMixin {
   final GetWeatherAndForecast getCurrentWeather;
   final LocalStorage localStorage = LocalStorage();
+
   HomeController(this.getCurrentWeather);
+
+  SplashController get splashController => Get.find<SplashController>();
   final conditionController = Get.find<ConditionController>();
+
   var isDrawerOpen = false.obs;
   final isLoading = false.obs;
-  final allCities = <CityModel>[].obs;
+  final selectedCities = <CityModel>[].obs;
+  final selectedCity = Rx<CityModel?>(null);
+  final scrollController = ScrollController();
   static final Map<String, Map<String, dynamic>> _rawDataStorage = {};
   final rawForecastData = <String, dynamic>{}.obs;
   final isWeatherDataLoaded = false.obs;
-  final currentLocationCity = Rx<CityModel?>(null);
+
+  Timer? _autoUpdateTimer;
+  static const Duration _updateInterval = Duration(minutes: 15);
 
   @override
-  void onInit() async {
+  void onInit() {
     super.onInit();
-    await _loadAllCities();
-    await _getCurrentLocation();
-    await _loadWeatherData();
+    refreshWeatherData();
+    _startAutoUpdate();
+    _loadSelectedCities();
+    _initializeSelectedCity();
   }
 
-  Future<void> _loadAllCities() async {
-    final String response = await rootBundle.loadString(Assets.cities);
-    final List<dynamic> data = json.decode(response);
-    allCities.value = data.map((city) => CityModel.fromJson(city)).toList();
+  @override
+  void onReady() {
+    super.onReady();
+    _autoScrollToCurrentHour();
   }
 
-  Future<void> _getCurrentLocation() async {
-    try {
-      final city = await getCurrentWeather.getCity();
-      final latStr = await localStorage.getString('latitude');
-      final lonStr = await localStorage.getString('longitude');
+  @override
+  void onClose() {
+    _autoUpdateTimer?.cancel();
+    super.onClose();
+  }
 
-      double? lat;
-      double? lon;
+  void _autoScrollToCurrentHour() {
+    ever(isWeatherDataLoaded, (bool loaded) {
+      if (loaded) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final int currentHour = DateTime.now().hour;
+          const double itemWidth = 80.0;
 
-      if (latStr != null && lonStr != null) {
-        lat = double.tryParse(latStr);
-        lon = double.tryParse(lonStr);
-      }
-
-      final foundCity = allCities.firstWhere(
-        (c) => c.city.toLowerCase() == city.toLowerCase(),
-        orElse: () {
-          if (lat != null && lon != null) {
-            return CityModel(
-              city: city,
-              cityAscii: city,
-              latitude: lat,
-              longitude: lon,
-            );
-          } else {
-            return CityModel(
-              city: city,
-              cityAscii: city,
-              latitude: 0.0,
-              longitude: 0.0,
+          if (scrollController.hasClients) {
+            scrollController.animateTo(
+              currentHour * itemWidth,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeInOut,
             );
           }
-        },
+        });
+      }
+    });
+  }
+
+  void _startAutoUpdate() {
+    _autoUpdateTimer = Timer.periodic(_updateInterval, (timer) {
+      refreshWeatherData();
+    });
+  }
+
+  Future<void> _initializeSelectedCity() async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    selectedCity.value = splashController.chosenCity;
+  }
+
+  Future<void> _loadSelectedCities() async {
+    try {
+      final selectedCitiesJson = await localStorage.getString(
+        'selected_cities',
       );
-      currentLocationCity.value = foundCity;
+      if (selectedCitiesJson != null) {
+        final List<dynamic> citiesData = json.decode(selectedCitiesJson);
+        selectedCities.value = citiesData
+            .map((data) => CityModel.fromJson(data))
+            .toList();
+      } else {
+        final currentCity = splashController.currentCity;
+        if (currentCity != null) {
+          selectedCities.value = [currentCity];
+          await _saveSelectedCities();
+        }
+      }
     } catch (e) {
-      debugPrint('Failed to fetch current location: $e');
-      currentLocationCity.value = null;
+      debugPrint('Error loading selected cities: $e');
     }
   }
 
-  Future<void> _loadWeatherData() async {
+  Future<void> _saveSelectedCities() async {
     try {
-      final city = currentLocationCity.value;
-      if (city == null) {
-        debugPrint('Current location city is null');
-        isWeatherDataLoaded.value = false;
-        return;
-      }
+      final citiesJson = json.encode(
+        selectedCities.map((c) => c.toJson()).toList(),
+      );
+      await localStorage.setString('selected_cities', citiesJson);
+    } catch (e) {
+      debugPrint('Error saving selected cities: $e');
+    }
+  }
 
+  Future<void> changeSelectedCity(CityModel city) async {
+    try {
+      isLoading.value = true;
+      selectedCity.value = city;
+      splashController.selectedCity.value = city;
+      await splashController.saveSelectedCityToStorage();
+      conditionController.clearWeatherData();
+      rawForecastData.clear();
+      _loadWeatherDataForCity(city);
+      _rawDataStorage[city.city] = Map<String, dynamic>.from(rawForecastData);
+    } catch (e) {
+      debugPrint('Error changing selected city: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> _loadWeatherDataForCity(CityModel city) async {
+    try {
       final (weather, forecast) = await getCurrentWeather(
         lat: city.latitude,
         lon: city.longitude,
       );
-      final cachedData = _rawDataStorage[city.city];
-      if (cachedData != null) {
-        rawForecastData.value = cachedData;
-        isWeatherDataLoaded.value = true;
-      } else {
-        debugPrint('No cached raw data found for ${city.city}');
-        isWeatherDataLoaded.value = false;
-      }
       conditionController.updateWeatherData([weather], 0, city.city);
       conditionController.updateWeeklyForecast(forecast);
+      rawForecastData.value = splashController.rawWeatherData;
+      isWeatherDataLoaded.value = true;
     } catch (e) {
-      debugPrint('Failed to load weather for current location: $e');
-      conditionController.clearWeatherData();
+      debugPrint('Failed to load weather data for ${city.city}: $e');
+      isWeatherDataLoaded.value = false;
     }
   }
 
-  Map<String, dynamic>? getCurrentHourData() {
-    final now = DateTime.now();
-    final today = DateTimeUtils.getTodayDateKey();
-    final forecastDays = rawForecastData['forecast']?['forecastday'];
-    if (forecastDays == null) return null;
+  Future<void> refreshWeatherData() async {
+    final currentCity = selectedCity.value;
+    if (currentCity == null) return;
+    try {
+      final (weather, forecast) = await getCurrentWeather(
+        lat: currentCity.latitude,
+        lon: currentCity.longitude,
+      );
+      conditionController.updateWeatherData([weather], 0, currentCity.city);
+      conditionController.updateWeeklyForecast(forecast);
+      rawForecastData.value = splashController.rawWeatherData;
+      _rawDataStorage[currentCity.city] = Map<String, dynamic>.from(
+        rawForecastData,
+      );
+    } catch (e) {
+      debugPrint('Auto-update failed: $e');
+    }
+  }
 
-    final todayData = (forecastDays as List).firstWhereOrNull(
-      (day) => day['date'] == today,
-    );
+  List<CityModel> get allCities => splashController.allCities;
+  CityModel? get currentLocationCity => splashController.currentCity;
+  String get selectedCityName =>
+      selectedCity.value?.city ?? splashController.selectedCityName;
+  bool get isAppReady => splashController.isAppReady;
 
-    if (todayData == null) return null;
-
-    final hourlyList = todayData['hour'] as List?;
-    if (hourlyList == null) return null;
-
-    final currentHour = hourlyList.firstWhereOrNull((hour) {
-      final hourTime = DateTimeUtils.parseLocal(hour['time']);
-      return hourTime.hour == now.hour;
-    });
-
-    return currentHour;
+  Map<String, dynamic>? get currentHourData =>
+      fetchCurrentHour(rawForecastData);
+  Map<String, dynamic>? getCityRawData(String cityName) {
+    return _rawDataStorage[cityName];
   }
 
   static void cacheCityData(String cityName, Map<String, dynamic> data) {

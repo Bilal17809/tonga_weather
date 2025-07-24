@@ -1,19 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:tonga_weather/presentation/home/view/home_view.dart';
-import '../../../core/constants/app_exceptions.dart';
 import '../../../core/global/global_controllers/condition_controller.dart';
 import '../../../core/global/global_services/connectivity_service.dart';
 import '../../../core/local_storage/local_storage.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../domain/use_cases/get_current_weather.dart';
 import '../../../data/model/city_model.dart';
-import '../../../data/model/weather_model.dart';
-import '../../../data/model/forecast_model.dart';
 import '../../../gen/assets.gen.dart';
 
 class SplashController extends GetxController with ConnectivityMixin {
@@ -21,59 +15,19 @@ class SplashController extends GetxController with ConnectivityMixin {
   final LocalStorage localStorage = LocalStorage();
 
   SplashController(this.getCurrentWeather);
+
   ConditionController get conditionController =>
       Get.find<ConditionController>();
-  Timer? _timer;
-  Timer? _flickerTimer;
-  Timer? _letterTimer;
+
   final isLoading = true.obs;
   final isDataLoaded = false.obs;
-  final loadingProgress = 0.0.obs;
-  final loadingMessage = 'Initializing...'.obs;
   final allCities = <CityModel>[].obs;
   final currentLocationCity = Rx<CityModel?>(null);
-  final selectedCities = <CityModel>[].obs;
-  final mainCityIndex = 0.obs;
+  final selectedCity = Rx<CityModel?>(null);
   final isFirstLaunch = true.obs;
+
   static final Map<String, Map<String, dynamic>> _rawDataStorage = {};
   var showButton = false.obs;
-  var visibleLetters = 0.obs;
-  var title = secondaryColorLight.obs;
-  final String _targetText = 'Live Forecasts Across Tonga!';
-  bool _colorUpdate = true;
-
-  final Color _color1 = primaryColorLight;
-  final Color _color2 = secondaryColorLight;
-
-  @override
-  void onInit() {
-    super.onInit();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _startSloganAnimation();
-      _animateTitle();
-    });
-  }
-
-  void _animateTitle() {
-    _letterTimer?.cancel();
-    _letterTimer = Timer.periodic(const Duration(milliseconds: 80), (timer) {
-      if (visibleLetters.value < _targetText.length) {
-        visibleLetters.value++;
-      } else {
-        timer.cancel();
-      }
-    });
-  }
-
-  void _startSloganAnimation() {
-    title.value = _color1;
-    _flickerTimer?.cancel();
-
-    _flickerTimer = Timer.periodic(const Duration(milliseconds: 800), (_) {
-      title.value = _colorUpdate ? _color2 : _color1;
-      _colorUpdate = !_colorUpdate;
-    });
-  }
 
   @override
   void onReady() {
@@ -92,34 +46,26 @@ class SplashController extends GetxController with ConnectivityMixin {
     try {
       isLoading.value = true;
       isDataLoaded.value = false;
+
       await _loadAllCities();
-      _updateProgress(0.25, 'Loading cities...');
       await _checkFirstLaunch();
-      _updateProgress(0.5, 'Checking configuration...');
       await _getCurrentLocation();
-      _updateProgress(0.75, 'Getting location...');
+
       if (isFirstLaunch.value) {
         await _setupFirstLaunch();
       } else {
-        await _loadSelectedCitiesFromStorage();
+        await _loadSelectedCityFromStorage();
       }
-      _updateProgress(0.9, 'Loading weather data...');
+
       await _loadWeatherData();
-      _updateProgress(1.0, 'Ready!');
       isDataLoaded.value = true;
     } catch (e) {
       debugPrint('Error during app initialization: $e');
-      await _fallbackSetup();
       isDataLoaded.value = true;
     } finally {
       isLoading.value = false;
       showButton.value = true;
     }
-  }
-
-  void _updateProgress(double progress, String message) {
-    loadingProgress.value = progress;
-    loadingMessage.value = message;
   }
 
   Future<void> _loadAllCities() async {
@@ -130,13 +76,12 @@ class SplashController extends GetxController with ConnectivityMixin {
 
   Future<void> _checkFirstLaunch() async {
     try {
-      final savedCitiesJson = await localStorage.getString('selected_cities');
+      final savedCityJson = await localStorage.getString('selected_city');
       final hasCurrentLocation =
           await localStorage.getBool('has_current_location') ?? false;
-
-      isFirstLaunch.value = savedCitiesJson == null || !hasCurrentLocation;
+      isFirstLaunch.value = savedCityJson == null || !hasCurrentLocation;
     } catch (e) {
-      debugPrint('$firstLaunch: $e');
+      debugPrint('First launch check error: $e');
       isFirstLaunch.value = true;
     }
   }
@@ -149,7 +94,6 @@ class SplashController extends GetxController with ConnectivityMixin {
 
       double? lat;
       double? lon;
-
       if (latStr != null && lonStr != null) {
         lat = double.tryParse(latStr);
         lon = double.tryParse(lonStr);
@@ -184,145 +128,74 @@ class SplashController extends GetxController with ConnectivityMixin {
   }
 
   Future<void> _setupFirstLaunch() async {
-    try {
-      final tallinn = allCities.firstWhere(
-        (city) => city.city.toLowerCase() == 'tallinn',
+    final currentCity = currentLocationCity.value;
+
+    if (currentCity != null) {
+      selectedCity.value = currentCity;
+    } else {
+      final nukualofa = allCities.firstWhere(
+        (city) => city.city.toLowerCase() == 'nukualofa',
         orElse: () => allCities.first,
       );
-
-      final currentCity = currentLocationCity.value;
-      final otherCity = allCities.firstWhere(
-        (city) =>
-            city.city.toLowerCase() != 'tallinn' &&
-            city.city.toLowerCase() != currentCity?.city.toLowerCase(),
-        orElse: () => allCities.length > 1 ? allCities[1] : allCities.first,
-      );
-
-      selectedCities.clear();
-
-      // Add current location as the main city (index 0)
-      if (currentCity != null) {
-        selectedCities.add(currentCity);
-        mainCityIndex.value = 0;
-      }
-
-      // Add Tallinn if it's not already the current location
-      if (currentCity == null ||
-          !selectedCities.any(
-            (c) => c.city.toLowerCase() == tallinn.city.toLowerCase(),
-          )) {
-        selectedCities.add(tallinn);
-        // If no current location, make Tallinn the main city
-        if (currentCity == null) {
-          mainCityIndex.value = selectedCities.length - 1;
-        }
-      }
-
-      // Add another city if needed
-      if (!selectedCities.any(
-        (c) => c.city.toLowerCase() == otherCity.city.toLowerCase(),
-      )) {
-        selectedCities.add(otherCity);
-      }
-
-      // Save the setup
-      await _saveSelectedCitiesToStorage();
-      await localStorage.setBool('has_current_location', currentCity != null);
-    } catch (e) {
-      debugPrint('Failed to setup first launch: $e');
-      await _fallbackSetup();
+      selectedCity.value = nukualofa;
     }
+
+    await saveSelectedCityToStorage();
+    await localStorage.setBool('has_current_location', currentCity != null);
   }
 
-  Future<void> _loadSelectedCitiesFromStorage() async {
+  Future<void> _loadSelectedCityFromStorage() async {
     try {
-      final savedCitiesJson = await localStorage.getString('selected_cities');
-      final mainCityIdx = await localStorage.getInt('main_city_index') ?? 0;
+      final savedCityJson = await localStorage.getString('selected_city');
 
-      if (savedCitiesJson != null) {
-        final List<dynamic> savedCitiesData = json.decode(savedCitiesJson);
-        final savedCities = savedCitiesData
-            .map((e) => CityModel.fromJson(e))
-            .toList();
-
-        selectedCities.value = savedCities.length >= 2
-            ? savedCities
-            : allCities.take(2).toList();
-        mainCityIndex.value = mainCityIdx.clamp(0, selectedCities.length - 1);
+      if (savedCityJson != null) {
+        final cityData = json.decode(savedCityJson);
+        selectedCity.value = CityModel.fromJson(cityData);
       } else {
-        selectedCities.value = allCities.take(2).toList();
-        await _saveSelectedCitiesToStorage();
+        final currentCity = currentLocationCity.value;
+        if (currentCity != null) {
+          selectedCity.value = currentCity;
+        } else {
+          final nukualofa = allCities.firstWhere(
+            (city) => city.city.toLowerCase() == 'nukualofa',
+            orElse: () => allCities.first,
+          );
+          selectedCity.value = nukualofa;
+        }
+        await saveSelectedCityToStorage();
       }
     } catch (e) {
-      debugPrint("Failed to load selected cities from storage: $e");
-      await _fallbackSetup();
-    }
-  }
-
-  Future<void> _saveSelectedCitiesToStorage() async {
-    try {
-      final citiesJson = json.encode(
-        selectedCities.map((e) => e.toJson()).toList(),
-      );
-      await localStorage.setString('selected_cities', citiesJson);
-      await localStorage.setInt('main_city_index', mainCityIndex.value);
-    } catch (e) {
-      debugPrint("Failed to save selected cities to storage: $e");
-    }
-  }
-
-  Future<void> _fallbackSetup() async {
-    try {
+      debugPrint("Failed to load selected city from storage: $e");
       if (allCities.isNotEmpty) {
-        selectedCities.value = allCities.take(3).toList();
-        mainCityIndex.value = 0;
-        await _saveSelectedCitiesToStorage();
+        selectedCity.value = allCities.first;
+        await saveSelectedCityToStorage();
       }
-    } catch (e) {
-      debugPrint('Fallback setup failed: $e');
     }
   }
 
-  void navigateToHome() {
-    if (isDataLoaded.value) {
-      Get.offAll(HomeView());
+  Future<void> saveSelectedCityToStorage() async {
+    try {
+      if (selectedCity.value != null) {
+        final cityJson = json.encode(selectedCity.value!.toJson());
+        await localStorage.setString('selected_city', cityJson);
+      }
+    } catch (e) {
+      debugPrint("Failed to save selected city to storage: $e");
     }
   }
 
   Future<void> _loadWeatherData() async {
     try {
-      List<WeatherModel> weatherList = [];
-      List<ForecastModel> mainCityForecast = [];
+      if (selectedCity.value == null) return;
 
-      for (int i = 0; i < selectedCities.length; i++) {
-        final city = selectedCities[i];
-        try {
-          final (weather, forecast) = await getCurrentWeather(
-            lat: city.latitude,
-            lon: city.longitude,
-          );
+      final city = selectedCity.value!;
+      final (weather, forecast) = await getCurrentWeather(
+        lat: city.latitude,
+        lon: city.longitude,
+      );
 
-          weatherList.add(weather);
-
-          if (i == mainCityIndex.value) {
-            mainCityForecast = forecast;
-          }
-        } catch (e) {
-          debugPrint('Failed to load weather for ${city.city}: $e');
-        }
-      }
-
-      if (weatherList.isNotEmpty) {
-        conditionController.updateWeatherData(
-          weatherList,
-          mainCityIndex.value,
-          mainCityName,
-        );
-
-        if (mainCityForecast.isNotEmpty) {
-          conditionController.updateWeeklyForecast(mainCityForecast);
-        }
-      }
+      conditionController.updateWeatherData([weather], 0, city.city);
+      conditionController.updateWeeklyForecast(forecast);
     } catch (e) {
       debugPrint('Failed to load weather data: $e');
       conditionController.clearWeatherData();
@@ -333,23 +206,11 @@ class SplashController extends GetxController with ConnectivityMixin {
     _rawDataStorage[cityName] = data;
   }
 
-  String get mainCityName =>
-      selectedCities.isNotEmpty && mainCityIndex.value < selectedCities.length
-      ? selectedCities[mainCityIndex.value].city
-      : 'Loading...';
-
+  String get selectedCityName => selectedCity.value?.city ?? 'Loading...';
   bool get isAppReady => isDataLoaded.value;
-  List<CityModel> get loadedCities => selectedCities.toList();
   CityModel? get currentCity => currentLocationCity.value;
-  int get mainIndex => mainCityIndex.value;
+  CityModel? get chosenCity => selectedCity.value;
   bool get isFirstTime => isFirstLaunch.value;
   Map<String, dynamic> get rawWeatherData =>
-      _rawDataStorage[mainCityName] ?? {};
-  @override
-  void onClose() {
-    _timer?.cancel();
-    _flickerTimer?.cancel();
-    _letterTimer?.cancel();
-    super.onClose();
-  }
+      _rawDataStorage[selectedCityName] ?? {};
 }

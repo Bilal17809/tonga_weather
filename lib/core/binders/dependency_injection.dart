@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:tonga_weather/core/global/global_services/weather_service.dart';
 import '../../data/data_source/online_data_sr.dart';
 import '../../data/repo/weather_api_impl.dart';
 import '../../domain/repositories/weather_repo.dart';
@@ -22,6 +23,7 @@ class DependencyInjection {
       () => GetWeatherAndForecast(Get.find<WeatherRepo>()),
       fenix: true,
     );
+    Get.put<WeatherService>(WeatherService(), permanent: true);
     Get.lazyPut<SplashController>(
       () => SplashController(Get.find<GetWeatherAndForecast>()),
       fenix: true,

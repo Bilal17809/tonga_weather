@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:tonga_weather/presentation/home/view/home_view.dart';
+import 'package:tonga_weather/presentation/splash/view/splash_view.dart';
 import 'core/binders/dependency_injection.dart';
 import 'core/local_storage/local_storage.dart';
 import 'core/theme/app_theme.dart';
@@ -35,7 +35,7 @@ class TongaWeather extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
-      home: const HomeView(),
+      home: const SplashView(),
     );
   }
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tonga_weather/core/utils/date_time_util.dart';
 import 'package:tonga_weather/presentation/home/controller/home_controller.dart';
-
 import '../../../../core/common_widgets/custom_appbar.dart';
 import '../../../../core/common_widgets/icon_buttons.dart';
 import '../../../../core/constants/constant.dart';
@@ -19,7 +18,6 @@ class WeatherHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final homeController = Get.find<HomeController>();
-
     return Obx(
       () => Container(
         decoration: roundedBottomDecor(context),
@@ -29,8 +27,7 @@ class WeatherHeader extends StatelessWidget {
               CustomAppBar(
                 useBackButton: false,
                 title:
-                    homeController.currentLocationCity.value?.cityAscii ??
-                    'Unknown City',
+                    homeController.selectedCity.value?.city ?? 'Unknown City',
                 subtitle: DateTimeUtils.getFormattedCurrentDate(),
                 actions: [
                   IconActionButton(
@@ -59,10 +56,8 @@ class _TemperatureSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final homeController = Get.find<HomeController>();
-
     return Obx(() {
-      final data = homeController.getCurrentHourData();
-
+      final data = homeController.rawForecastData['current'];
       return Padding(
         padding: kContentPadding,
         child: Row(

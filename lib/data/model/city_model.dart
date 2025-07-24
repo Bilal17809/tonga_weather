@@ -19,7 +19,14 @@ class CityModel {
       longitude: json['longitude'],
     );
   }
-
+  factory CityModel.fallback(String cityName, {double? lat, double? lon}) {
+    return CityModel(
+      city: cityName,
+      cityAscii: cityName,
+      latitude: lat ?? 0.0,
+      longitude: lon ?? 0.0,
+    );
+  }
   Map<String, dynamic> toJson() {
     return {
       'city': city,
