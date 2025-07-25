@@ -7,7 +7,7 @@ import 'package:tonga_weather/presentation/home/controller/home_controller.dart'
 import 'package:tonga_weather/presentation/home/view/widgets/weather_body.dart';
 import 'package:tonga_weather/presentation/home/view/widgets/weather_header.dart';
 import '../../../core/common_widgets/custom_drawer.dart';
-import '../../../core/global/global_services/global_key.dart';
+import '../../../core/global/global_keys/global_key.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});

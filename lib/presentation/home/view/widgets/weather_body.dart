@@ -43,11 +43,9 @@ class WeatherBody extends StatelessWidget {
 
 class _HourlyForecastList extends StatelessWidget {
   const _HourlyForecastList();
-
   @override
   Widget build(BuildContext context) {
     final homeController = Get.find<HomeController>();
-
     return Obx(() {
       final forecastDays =
           homeController.rawForecastData['forecast']?['forecastday'];
@@ -55,10 +53,8 @@ class _HourlyForecastList extends StatelessWidget {
       final hourlyList = todayData?['hour'] as List? ?? [];
       final now = DateTime.now();
       final isLoading = forecastDays == null || homeController.isLoading.value;
-
       if (isLoading) {
         const shimmerItemCount = 24;
-
         return SizedBox(
           height: mobileHeight(context) * 0.14,
           child: ShimmerListView(
@@ -72,7 +68,6 @@ class _HourlyForecastList extends StatelessWidget {
           ),
         );
       }
-
       return SizedBox(
         height: mobileHeight(context) * 0.14,
         child: ListView.builder(
@@ -84,7 +79,6 @@ class _HourlyForecastList extends StatelessWidget {
             final hourTime = DateTime.parse(hourData['time']);
             final hourLabel = TimeOfDay.fromDateTime(hourTime).format(context);
             final isCurrentHour = hourTime.hour == now.hour;
-
             return _HourlyForecast(
               day: hourLabel,
               isSelected: isCurrentHour,

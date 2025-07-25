@@ -22,10 +22,9 @@ class ForecastModel {
   });
 
   factory ForecastModel.fromJson(Map<String, dynamic> json) {
-    final iconUrl =
-        json['day']?['condition']?['icon'] != null
-            ? 'https:${json['day']['condition']['icon']}'
-            : '';
+    final iconUrl = json['day']?['condition']?['icon'] != null
+        ? 'https:${json['day']['condition']['icon']}'
+        : '';
 
     return ForecastModel(
       date: json['date'],

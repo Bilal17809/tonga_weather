@@ -20,14 +20,4 @@ class LocalStorage {
   Future<void> setBool(String key, bool value) async {
     await _secureStorage.write(key: key, value: value.toString());
   }
-
-  Future<int?> getInt(String key) async {
-    final value = await _secureStorage.read(key: key);
-    if (value == null) return null;
-    return int.tryParse(value);
-  }
-
-  Future<void> setInt(String key, int value) async {
-    await _secureStorage.write(key: key, value: value.toString());
-  }
 }

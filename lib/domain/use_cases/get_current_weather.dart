@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 
-import '../../core/constants/app_exceptions.dart';
+import '../../core/common/app_exceptions.dart';
 import '../../core/local_storage/local_storage.dart';
 import '../../data/model/weather_model.dart';
 import '../../data/model/forecast_model.dart';
@@ -24,7 +24,7 @@ class GetWeatherAndForecast {
   Future<String> getCity() async {
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      throw Exception(deniedPermission);
+      throw Exception(AppExceptions().deniedPermission);
     }
 
     LocationPermission permission = await Geolocator.checkPermission();
@@ -32,7 +32,7 @@ class GetWeatherAndForecast {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
-        throw Exception(deniedPermission);
+        throw Exception(AppExceptions().deniedPermission);
       }
     }
 
@@ -44,7 +44,7 @@ class GetWeatherAndForecast {
           ),
         ).timeout(
           const Duration(seconds: 8),
-          onTimeout: () => throw Exception(timeoutException),
+          onTimeout: () => throw Exception(AppExceptions().timeoutException),
         );
 
     await savePosition(position);

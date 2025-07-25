@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tonga_weather/core/theme/app_theme.dart';
-import 'package:tonga_weather/presentation/home/view/home_view.dart';
-import '../../../../core/common_widgets/icon_buttons.dart';
 import '../../../../core/constants/constant.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_styles.dart';
@@ -21,17 +19,13 @@ class CityCard extends StatelessWidget {
     final HomeController homeController = Get.find();
 
     return Obx(() {
-      final isSelected = homeController.selectedCities.any(
-        (selectedCity) => selectedCity.city == city.city,
-      );
       final isCurrentlySelectedCity =
           homeController.selectedCity.value?.city == city.city;
 
       return GestureDetector(
         onTap: () async {
           await controller.selectCity(city);
-          // Get.to(HomeView());
-          // Get.back();
+          Get.back();
         },
         child: Container(
           margin: const EdgeInsets.only(bottom: kElementGap),
@@ -97,17 +91,13 @@ class CityCard extends StatelessWidget {
                             style: bodyMediumStyle(
                               context,
                             ).copyWith(color: kWhite),
+                            maxLines: 3,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
                     ],
                   ),
-                ),
-                IconActionButton(
-                  icon: Icons.check_circle,
-                  color: isSelected ? kWhite : transparent,
-                  size: smallIcon(context),
                 ),
               ],
             ),

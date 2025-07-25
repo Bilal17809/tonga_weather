@@ -1,235 +1,57 @@
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import '../../../data/model/weather_model.dart';
 import '../../../data/model/forecast_model.dart';
-import '../../utils/weather_utils.dart';
+import '../../utils/date_time_util.dart';
 
 class ConditionController extends GetxController {
   final mainCityWeather = Rx<WeatherModel?>(null);
   final selectedCitiesWeather = <WeatherModel>[].obs;
   final weeklyForecast = <Map<String, dynamic>>[].obs;
-  final mainCityIndex = 0.obs;
   final mainCityName = ''.obs;
-
-  // Store raw forecast data for current hour access
   final rawForecastData = <String, dynamic>{}.obs;
-
-  String get temperature {
-    return mainCityWeather.value != null
-        ? '${mainCityWeather.value!.temperature.round()}'
-        : '--';
-  }
-
-  // Get current hour temperature from raw forecast data
-  String get currentHourTemperature {
-    if (rawForecastData.isEmpty) return '--';
-
-    final now = DateTime.now();
-    final today = _getTodayDateKey();
-
-    final forecastDays = rawForecastData['forecast']?['forecastday'];
-    if (forecastDays == null) return '--';
-
-    final todayData = (forecastDays as List).firstWhere(
-      (day) => day['date'] == today,
-      orElse: () => null,
-    );
-
-    if (todayData == null) return '--';
-
-    final hourlyList = todayData['hour'] as List?;
-    if (hourlyList == null) return '--';
-
-    final currentHour = hourlyList.firstWhere((hour) {
-      final hourTime = DateTime.parse(hour['time']);
-      return hourTime.hour == now.hour;
-    }, orElse: () => null);
-
-    if (currentHour != null) {
-      final temp = currentHour['temp_c'];
-      return '${(temp as num).round()}';
-    }
-
-    return '--';
-  }
-
-  String get condition {
-    return mainCityWeather.value?.condition ?? 'Loading...';
-  }
-
-  String get chanceOfRain {
-    return mainCityWeather.value != null
-        ? '${mainCityWeather.value!.chanceOfRain}%'
-        : '--%';
-  }
-
-  String get humidity {
-    return mainCityWeather.value != null
-        ? '${mainCityWeather.value!.humidity}%'
-        : '--%';
-  }
-
-  String get windSpeed {
-    return mainCityWeather.value != null
-        ? '${mainCityWeather.value!.windSpeed.toStringAsFixed(1)}km/h'
-        : '--km/h';
-  }
-
-  String get minTemp {
-    if (weeklyForecast.isNotEmpty) {
-      final todayForecast = weeklyForecast.firstWhere(
-        (forecast) => forecast['day'] == 'Today',
-        orElse: () => weeklyForecast.first,
-      );
-      return '${todayForecast['minTemp']?.round() ?? '--'}';
-    }
-    return '--';
-  }
-
-  String get maxTemp {
-    if (weeklyForecast.isNotEmpty) {
-      final todayForecast = weeklyForecast.firstWhere(
-        (forecast) => forecast['day'] == 'Today',
-        orElse: () => weeklyForecast.first,
-      );
-      return '${todayForecast['temp']?.round() ?? '--'}';
-    }
-    return '--';
-  }
-
-  String get weatherIconPath {
-    if (mainCityWeather.value != null) {
-      String weatherType = WeatherUtils.getWeatherIcon(
-        mainCityWeather.value!.code,
-      );
-      return WeatherUtils.getWeatherIconPath(weatherType);
-    }
-    return WeatherUtils.getWeatherIconPath('clear');
-  }
-
-  List<WeatherModel> get otherCitiesWeather {
-    if (selectedCitiesWeather.length <= 1) return [];
-    String currentMainCityName = mainCityWeather.value?.cityName ?? '';
-    return selectedCitiesWeather
-        .where((weather) => weather.cityName != currentMainCityName)
-        .toList();
-  }
-
-  List<Map<String, dynamic>> getHourlyDataForDate({
-    required String targetDate,
-    required Map<String, dynamic> rawForecastData,
-  }) {
-    final forecastDays = rawForecastData['forecast']?['forecastday'] as List?;
-    if (forecastDays == null) return [];
-
-    final targetDay = forecastDays.firstWhere(
-      (day) => day['date'] == targetDate,
-      orElse: () => null,
-    );
-
-    if (targetDay != null) {
-      final hourly = targetDay['hour'] as List;
-      return hourly.map((hour) {
-        return {
-          'time': hour['time'],
-          'temp_c': (hour['temp_c'] as num).toDouble(),
-          'condition': hour['condition']['text'],
-          'iconUrl': 'https:${hour['condition']['icon']}',
-          'humidity': hour['humidity'],
-          'wind_kph': (hour['wind_kph'] as num).toDouble(),
-          'chance_of_rain': hour['chance_of_rain'],
-          'precip_mm': (hour['precip_mm'] as num).toDouble(),
-          'feels_like_c': (hour['feelslike_c'] as num).toDouble(),
-          'uv': (hour['uv'] as num).toDouble(),
-          'pressure_mb': (hour['pressure_mb'] as num).toDouble(),
-          'vis_km': (hour['vis_km'] as num).toDouble(),
-          'gust_kph': (hour['gust_kph'] as num).toDouble(),
-        };
-      }).toList();
-    }
-    return [];
-  }
-
-  Map<String, dynamic>? getCurrentHourData() {
-    if (rawForecastData.isEmpty) return null;
-
-    final now = DateTime.now();
-    final today = _getTodayDateKey();
-
-    final forecastDays = rawForecastData['forecast']?['forecastday'];
-    if (forecastDays == null) return null;
-
-    final todayData = (forecastDays as List).firstWhere(
-      (day) => day['date'] == today,
-      orElse: () => null,
-    );
-
-    if (todayData == null) return null;
-
-    final hourlyList = todayData['hour'] as List?;
-    if (hourlyList == null) return null;
-
-    final currentHour = hourlyList.firstWhere((hour) {
-      final hourTime = DateTime.parse(hour['time']);
-      return hourTime.hour == now.hour;
-    }, orElse: () => null);
-
-    return currentHour;
-  }
+  String get minTemp => _getTodayForecastValue('minTemp');
+  String get maxTemp => _getTodayForecastValue('temp');
+  String get chanceOfRain => '${mainCityWeather.value?.chanceOfRain ?? '--'}%';
+  String get humidity => '${mainCityWeather.value?.humidity ?? '--'}%';
+  String get windSpeed =>
+      '${mainCityWeather.value?.windSpeed.toStringAsFixed(1) ?? '--'}km/h';
 
   void updateWeatherData(
     List<WeatherModel> weatherList,
     int mainIndex,
     String cityName,
   ) {
-    selectedCitiesWeather.value = weatherList;
-    mainCityIndex.value = mainIndex;
     mainCityName.value = cityName;
-    if (weatherList.isNotEmpty && mainIndex < weatherList.length) {
-      mainCityWeather.value = weatherList[mainIndex];
-    }
+    mainCityWeather.value = (mainIndex < weatherList.length)
+        ? weatherList[mainIndex]
+        : null;
   }
 
   void updateWeeklyForecast(List<ForecastModel> forecastList) {
-    weeklyForecast.value = forecastList.map((forecast) {
+    weeklyForecast.value = forecastList.map((f) {
       return {
-        'day': getDayName(forecast.date),
-        'date': DateTime.parse(forecast.date),
-        'dateString': forecast.date,
-        'temp': forecast.maxTemp,
-        'minTemp': forecast.minTemp,
-        'iconUrl': forecast.iconUrl,
-        'condition': forecast.condition,
-        'humidity': forecast.humidity,
-        'windSpeed': forecast.windSpeed,
-        'chanceOfRain': forecast.chanceOfRain,
+        'day': _getDayLabel(f.date),
+        'date': DateTime.parse(f.date),
+        'dateString': f.date,
+        'temp': f.maxTemp,
+        'minTemp': f.minTemp,
+        'iconUrl': f.iconUrl,
+        'condition': f.condition,
+        'humidity': f.humidity,
+        'windSpeed': f.windSpeed,
+        'chanceOfRain': f.chanceOfRain,
       };
     }).toList();
   }
 
-  // Update raw forecast data for current hour access
   void updateRawForecastData(Map<String, dynamic> data) {
     rawForecastData.value = data;
   }
 
-  String getDayName(String dateString) {
-    final date = DateTime.parse(dateString);
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final targetDate = DateTime(date.year, date.month, date.day);
-    final difference = targetDate.difference(today).inDays;
-    if (difference == 0) {
-      return 'Today';
-    } else {
-      return DateFormat('EEE').format(date);
-    }
-  }
-
   Map<String, dynamic>? getForecastForDay(int index) {
-    if (index >= 0 && index < weeklyForecast.length) {
-      return weeklyForecast[index];
-    }
-    return null;
+    return (index >= 0 && index < weeklyForecast.length)
+        ? weeklyForecast[index]
+        : null;
   }
 
   void clearWeatherData() {
@@ -240,8 +62,21 @@ class ConditionController extends GetxController {
     rawForecastData.clear();
   }
 
-  String _getTodayDateKey() {
-    final now = DateTime.now();
-    return '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+  String _formatTemp(num? temp) => temp != null ? '${temp.round()}' : '--';
+
+  String _getTodayForecastValue(String key) {
+    if (weeklyForecast.isEmpty) return '--';
+    final today = weeklyForecast.firstWhere(
+      (d) => d['day'] == 'Today',
+      orElse: () => weeklyForecast.first,
+    );
+    return _formatTemp(today[key] as num?);
+  }
+
+  String _getDayLabel(String dateStr) {
+    final date = DateTime.parse(dateStr);
+    return DateTimeUtils.isToday(date)
+        ? 'Today'
+        : DateTimeUtils.getWeekday(date);
   }
 }

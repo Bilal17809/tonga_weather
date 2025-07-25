@@ -2,16 +2,25 @@ import 'package:intl/intl.dart';
 
 class DateTimeUtils {
   static String getFormattedCurrentDate() {
-    final now = DateTime.now();
-    return DateFormat('EEE MMMM d').format(now);
+    return DateFormat('EEE MMMM d').format(DateTime.now());
   }
 
   static String getTodayDateKey() {
-    final now = DateTime.now();
-    return DateFormat('yyyy-MM-dd').format(now);
+    return DateFormat('yyyy-MM-dd').format(DateTime.now());
   }
 
   static DateTime parseLocal(String time) {
     return DateTime.parse(time).toLocal();
+  }
+
+  static bool isToday(DateTime date) {
+    final now = DateTime.now();
+    return date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day;
+  }
+
+  static String getWeekday(DateTime date) {
+    return DateFormat('EEE').format(date);
   }
 }

@@ -86,7 +86,7 @@ class CurrentLocationCard extends StatelessWidget {
                 ),
                 Icon(
                   isCurrentlySelected
-                      ? Icons.check_circle
+                      ? Icons.my_location
                       : Icons.location_searching,
                   color: kWhite,
                   size: smallIcon(context),

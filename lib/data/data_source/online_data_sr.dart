@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
-import '../../core/constants/app_exceptions.dart';
+import '../../core/common/app_exceptions.dart';
 import '../model/weather_model.dart';
 import '../model/forecast_model.dart';
 import '../../presentation/home/controller/home_controller.dart';
@@ -35,7 +35,9 @@ class OnlineDataSource {
           .toList();
       return (current, forecast);
     } else {
-      throw Exception('$failedApiCall: ${response.statusCode}');
+      throw Exception(
+        '${AppExceptions().failedApiCall}: ${response.statusCode}',
+      );
     }
   }
 
@@ -51,10 +53,12 @@ class OnlineDataSource {
       if (cityName != null) {
         return cityName;
       } else {
-        throw Exception(noCityInApi);
+        throw Exception(AppExceptions().noCityInApi);
       }
     } else {
-      throw Exception('$failedApiCall: ${response.statusCode}');
+      throw Exception(
+        '${AppExceptions().failedApiCall}: ${response.statusCode}',
+      );
     }
   }
 }

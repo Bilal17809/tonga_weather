@@ -4,7 +4,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../constants/app_exceptions.dart';
+import '../../common/app_exceptions.dart';
 import '../../constants/constant.dart';
 import '../../theme/app_colors.dart';
 
@@ -278,7 +278,7 @@ mixin ConnectivityMixin on GetxController {
     if (hasInternet) {
       await onConnected();
     } else {
-      debugPrint(noInternet);
+      debugPrint(AppExceptions().noInternet);
     }
   }
 

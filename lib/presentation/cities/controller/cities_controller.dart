@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
+import '../../../core/common/app_exceptions.dart';
 import '../../../core/utils/fetch_current_hour.dart';
 import '../../../data/model/aqi_model.dart';
 import '../../../data/model/city_model.dart';
@@ -25,8 +26,24 @@ class CitiesController extends GetxController {
   Future<void> onInit() async {
     super.onInit();
     filteredCities.value = homeController.allCities;
+
+    // Initialize rawForecastData from HomeController
+    _initializeRawForecastData();
+
     searchController.addListener(() {
       searchCities(searchController.text);
+    });
+  }
+
+  void _initializeRawForecastData() {
+    // Get current raw forecast data from HomeController
+    rawForecastData.value = Map<String, dynamic>.from(
+      homeController.rawForecastData,
+    );
+
+    // Listen to changes in HomeController's rawForecastData
+    ever(homeController.rawForecastData, (Map<String, dynamic> newData) {
+      rawForecastData.value = Map<String, dynamic>.from(newData);
     });
   }
 
@@ -36,8 +53,10 @@ class CitiesController extends GetxController {
       hasSearchError.value = false;
       return;
     }
+
     isSearching.value = true;
     hasSearchError.value = false;
+
     try {
       final results = homeController.allCities
           .where(
@@ -46,6 +65,7 @@ class CitiesController extends GetxController {
                 city.cityAscii.toLowerCase().contains(query.toLowerCase()),
           )
           .toList();
+
       if (results.isEmpty) {
         hasSearchError.value = true;
         searchErrorMessage.value = 'No cities found matching "$query"';
@@ -74,13 +94,15 @@ class CitiesController extends GetxController {
     try {
       final selectedCities = <CityModel>[city];
       homeController.selectedCities.value = selectedCities;
+
       final citiesJson = json.encode(
         selectedCities.map((c) => c.toJson()).toList(),
       );
       await localStorage.setString('selected_cities', citiesJson);
+
       await homeController.changeSelectedCity(city);
     } catch (e) {
-      debugPrint('Error selecting city: $e');
+      debugPrint('${AppExceptions().failToSelect}: $e');
     }
   }
 

@@ -57,7 +57,8 @@ class _TemperatureSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final homeController = Get.find<HomeController>();
     return Obx(() {
-      final data = homeController.rawForecastData['current'];
+      final data = homeController.currentHourData;
+
       return Padding(
         padding: kContentPadding,
         child: Row(
