@@ -6,6 +6,7 @@ import 'package:tonga_weather/core/global/global_services/city_storage_service.d
 import 'package:tonga_weather/core/global/global_services/connectivity_service.dart';
 import 'package:tonga_weather/core/utils/fetch_current_hour.dart';
 import 'package:tonga_weather/data/model/city_model.dart';
+import '../../../core/common/app_exceptions.dart';
 import '../../../core/constants/constant.dart';
 import '../../../core/global/global_services/load_weather_service.dart';
 import '../../splash/controller/splash_controller.dart';
@@ -31,15 +32,16 @@ class HomeController extends GetxController with ConnectivityMixin {
   final rawForecastData = <String, dynamic>{}.obs;
   final isWeatherDataLoaded = false.obs;
   Timer? _autoUpdateTimer;
+
   @override
   void onInit() async {
     super.onInit();
     _refreshWeatherData();
-    _startAutoUpdate();
     final fallbackCity = splashController.currentCity;
     final cities = await cityStorageService.loadSelectedCities(fallbackCity);
     selectedCities.value = cities;
-    _initializeSelectedCity();
+    await _initializeSelectedCity(cities.first);
+    _startAutoUpdate();
     _setupAutoScroll();
   }
 
@@ -82,9 +84,33 @@ class HomeController extends GetxController with ConnectivityMixin {
     });
   }
 
-  Future<void> _initializeSelectedCity() async {
-    await Future.delayed(const Duration(milliseconds: 100));
+  // Future<void> _initializeSelectedCity() async {
+  //   await Future.delayed(const Duration(milliseconds: 100));
+  //   selectedCity.value = splashController.chosenCity;
+  // }
+  Future<void> _initializeSelectedCity(CityModel city) async {
+    while (!splashController.isAppReady) {
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
     selectedCity.value = splashController.chosenCity;
+    rawForecastData.value = Map<String, dynamic>.from(
+      _rawDataStorage[city.city]!,
+    );
+    // if (selectedCity.value != null) {
+    //   final cityWeather =
+    //   conditionController.allCitiesWeather[selectedCity.value!.city];
+    //   if (cityWeather != null) {
+    //     try {
+    //       final (_, forecast) = await getCurrentWeather(
+    //         lat: selectedCity.value!.latitude,
+    //         lon: selectedCity.value!.longitude,
+    //       );
+    //       conditionController.updateWeeklyForecast(forecast);
+    //     } catch (e) {
+    //       debugPrint('${AppExceptions().failToLoadWeather}: $e');
+    //     }
+    //   }
+    // }
   }
 
   Future<void> changeSelectedCity(CityModel city) async {

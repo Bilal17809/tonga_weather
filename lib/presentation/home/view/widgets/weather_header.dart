@@ -56,8 +56,12 @@ class _TemperatureSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final homeController = Get.find<HomeController>();
+
     return Obx(() {
-      final data = homeController.currentHourData;
+      final currentData = homeController.rawForecastData['current'];
+      final temp = currentData != null
+          ? currentData['temp_c']?.round().toString()
+          : '--';
 
       return Padding(
         padding: kContentPadding,
@@ -66,14 +70,11 @@ class _TemperatureSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(Assets.cloudy.path, width: primaryIcon(context)),
-            SizedBox(width: kElementGap),
+            const SizedBox(width: kElementGap),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  data != null ? data['temp_c'].round().toString() : '--',
-                  style: headlineLargeStyle(context),
-                ),
+                Text(temp!, style: headlineLargeStyle(context)),
                 Text('°', style: headlineLargeStyle(context)),
               ],
             ),

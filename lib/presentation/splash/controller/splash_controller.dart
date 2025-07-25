@@ -48,7 +48,19 @@ class SplashController extends GetxController with ConnectivityMixin {
       initWithConnectivityCheck(
         context: Get.context!,
         onConnected: () async {
-          _initializeApp();
+          await _initializeApp();
+          // final savedCityJson = await localStorage.getString('selected_city');
+          // final hasCurrentLocation =
+          //     await localStorage.getBool('has_current_location') ?? false;
+          // isFirstLaunch.value = savedCityJson == null || !hasCurrentLocation;
+          // if(savedCityJson!.isEmpty){
+          //   await loadWeatherService.loadWeatherForAllCities(allCities);
+          //   // await loadWeatherService.loadWeatherData(savedCityJson.value);
+          // }else
+          //
+          // print(
+          //   '#################################### ${conditionController.allCitiesWeather}',
+          // );
         },
       );
     });
@@ -58,10 +70,13 @@ class SplashController extends GetxController with ConnectivityMixin {
     try {
       isLoading.value = true;
       isDataLoaded.value = false;
+
       allCities.value = await cityService.loadAllCities();
       await _checkFirstLaunch();
+
       currentLocationCity.value = await currentLocationService
           .getCurrentLocationCity(allCities);
+
       if (isFirstLaunch.value) {
         await _setupFirstLaunch();
       } else {
@@ -71,7 +86,11 @@ class SplashController extends GetxController with ConnectivityMixin {
         );
         await cityStorageService.saveSelectedCity(selectedCity.value);
       }
-      await loadWeatherService.loadWeatherData(selectedCity.value);
+      await loadWeatherService.loadWeatherForAllCities(
+        allCities,
+        selectedCity: selectedCity.value,
+      );
+
       isDataLoaded.value = true;
     } catch (e) {
       debugPrint('${AppExceptions().errorAppInit}: $e');

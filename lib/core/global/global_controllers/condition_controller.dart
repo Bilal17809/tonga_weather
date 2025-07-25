@@ -6,6 +6,7 @@ import '../../utils/date_time_util.dart';
 class ConditionController extends GetxController {
   final mainCityWeather = Rx<WeatherModel?>(null);
   final selectedCitiesWeather = <WeatherModel>[].obs;
+  final allCitiesWeather = <String, WeatherModel>{}.obs;
   final weeklyForecast = <Map<String, dynamic>>[].obs;
   final mainCityName = ''.obs;
   final rawForecastData = <String, dynamic>{}.obs;

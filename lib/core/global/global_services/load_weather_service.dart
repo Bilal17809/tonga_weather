@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:tonga_weather/core/common/app_exceptions.dart';
-
 import '../../../data/model/city_model.dart';
 import '../../../domain/use_cases/get_current_weather.dart';
 import '../global_controllers/condition_controller.dart';
@@ -14,27 +13,28 @@ class LoadWeatherService {
     required this.conditionController,
   });
 
-  Future<void> loadWeatherData(CityModel? selectedCity) async {
+  Future<void> loadWeatherForAllCities(
+    List<CityModel> cities, {
+    CityModel? selectedCity,
+  }) async {
     try {
-      if (selectedCity == null) return;
+      String? selectedCityName = selectedCity?.city;
 
-      final (weather, forecast) = await getCurrentWeather(
-        lat: selectedCity.latitude,
-        lon: selectedCity.longitude,
-      );
-      conditionController.updateWeatherData([weather], 0, selectedCity.city);
-      conditionController.updateWeeklyForecast(forecast);
+      for (var city in cities) {
+        final (weather, forecast) = await getCurrentWeather(
+          lat: city.latitude,
+          lon: city.longitude,
+        );
+
+        if (selectedCityName != null && city.city == selectedCityName) {
+          conditionController.updateWeatherData([weather], 0, city.city);
+          conditionController.updateWeeklyForecast(forecast);
+        }
+        conditionController.allCitiesWeather[city.city] = weather;
+      }
     } catch (e) {
       debugPrint('${AppExceptions().failToLoadWeather}: $e');
-      conditionController.clearWeatherData();
+      conditionController.allCitiesWeather.clear();
     }
   }
 }
-
-// Future<void> loadWeatherData(double lat,double lon) async {
-//   try {
-//     conditionController.updateWeeklyForecast(lat,long);
-//   }
-//
-// }catch (e) {
-// }
