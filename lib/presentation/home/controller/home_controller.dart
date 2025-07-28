@@ -36,11 +36,33 @@ class HomeController extends GetxController with ConnectivityMixin {
   @override
   void onInit() async {
     super.onInit();
-    _refreshWeatherData();
+    print('[HomeController] onInit called');
     final fallbackCity = splashController.currentCity;
     final cities = await cityStorageService.loadSelectedCities(fallbackCity);
-    selectedCities.value = cities;
-    await _initializeSelectedCity(cities.first);
+    print(
+      '[HomeController] Loaded cities: ${cities.map((e) => e.city).toList()}',
+    );
+
+    if (cities.isEmpty) {
+      while (!splashController.isAppReady) {
+        await Future.delayed(const Duration(milliseconds: 50));
+      }
+      final splashSelectedCity = splashController.chosenCity;
+      print(
+        '[HomeController] Using splash selected city: ${splashSelectedCity?.city}',
+      );
+      if (splashSelectedCity != null) {
+        selectedCities.value = [splashSelectedCity];
+        await _initializeSelectedCity(splashSelectedCity);
+      }
+    } else {
+      print(
+        '[HomeController] Using stored selected city: ${cities.first.city}',
+      );
+      selectedCities.value = cities;
+      await _initializeSelectedCity(cities.first);
+    }
+
     _startAutoUpdate();
     _setupAutoScroll();
   }
@@ -69,7 +91,6 @@ class HomeController extends GetxController with ConnectivityMixin {
       final double itemWidth = mobileWidth(context) * 0.22;
       final int currentHour = DateTime.now().hour;
       final double targetScrollOffset = currentHour * itemWidth;
-
       scrollController.animateTo(
         targetScrollOffset,
         duration: const Duration(milliseconds: 500),
@@ -80,122 +101,34 @@ class HomeController extends GetxController with ConnectivityMixin {
 
   void _startAutoUpdate() {
     _autoUpdateTimer = Timer.periodic(const Duration(minutes: 15), (timer) {
-      _refreshWeatherData();
+      loadWeatherService.loadWeatherForAllCities(
+        allCities,
+        selectedCity: selectedCity.value,
+        currentLocationCity: currentLocationCity,
+      );
     });
   }
 
-  // Future<void> _initializeSelectedCity() async {
-  //   await Future.delayed(const Duration(milliseconds: 100));
-  //   selectedCity.value = splashController.chosenCity;
-  // }
   Future<void> _initializeSelectedCity(CityModel city) async {
+    print(
+      '[HomeController] _initializeSelectedCity called for: ${city.cityAscii}',
+    );
     while (!splashController.isAppReady) {
       await Future.delayed(const Duration(milliseconds: 50));
     }
-    selectedCity.value = splashController.chosenCity;
-    rawForecastData.value = Map<String, dynamic>.from(
-      _rawDataStorage[city.city]!,
-    );
-    // if (selectedCity.value != null) {
-    //   final cityWeather =
-    //   conditionController.allCitiesWeather[selectedCity.value!.city];
-    //   if (cityWeather != null) {
-    //     try {
-    //       final (_, forecast) = await getCurrentWeather(
-    //         lat: selectedCity.value!.latitude,
-    //         lon: selectedCity.value!.longitude,
-    //       );
-    //       conditionController.updateWeeklyForecast(forecast);
-    //     } catch (e) {
-    //       debugPrint('${AppExceptions().failToLoadWeather}: $e');
-    //     }
-    //   }
-    // }
-  }
 
-  Future<void> changeSelectedCity(CityModel city) async {
-    try {
-      isLoading.value = true;
-      selectedCity.value = city;
-      splashController.selectedCity.value = city;
-      await splashController.cityStorageService.saveSelectedCity(city);
-      conditionController.clearWeatherData();
-      rawForecastData.clear();
-      isWeatherDataLoaded.value = false;
-      if (_rawDataStorage.containsKey(city.city)) {
-        rawForecastData.value = Map<String, dynamic>.from(
-          _rawDataStorage[city.city]!,
-        );
-        await _updateConditionControllerFromCache(city);
-        isWeatherDataLoaded.value = true;
-      } else {
-        await _loadWeatherDataForCity(city);
-      }
-    } catch (e) {
-      debugPrint('Error changing selected city: $e');
-    } finally {
-      isLoading.value = false;
-    }
-  }
+    selectedCity.value = city;
+    final cityData = _rawDataStorage[city.cityAscii];
 
-  Future<void> _updateConditionControllerFromCache(CityModel city) async {
-    try {
-      final (weather, forecast) = await getCurrentWeather(
-        lat: city.latitude,
-        lon: city.longitude,
+    if (cityData != null) {
+      print(
+        '##############################[HomeController] Found cached data for: ${city.cityAscii}',
       );
-      conditionController.updateWeatherData([weather], 0, city.city);
-      conditionController.updateWeeklyForecast(forecast);
-      final rawData = getCityRawData(city.city);
-      if (rawData != null) {
-        rawForecastData.value = Map<String, dynamic>.from(rawData);
-        _rawDataStorage[city.city] = Map<String, dynamic>.from(rawData);
-      }
-    } catch (e) {
-      debugPrint('Error updating condition controller from cache: $e');
-    }
-  }
-
-  Future<void> _loadWeatherDataForCity(CityModel city) async {
-    try {
-      final (weather, forecast) = await getCurrentWeather(
-        lat: city.latitude,
-        lon: city.longitude,
+      rawForecastData.value = Map<String, dynamic>.from(cityData);
+    } else {
+      print(
+        '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@[HomeController] No cached data found for: ${city.cityAscii}',
       );
-      conditionController.updateWeatherData([weather], 0, city.city);
-      conditionController.updateWeeklyForecast(forecast);
-
-      final rawData = getCityRawData(city.city);
-      if (rawData != null) {
-        rawForecastData.value = Map<String, dynamic>.from(rawData);
-        _rawDataStorage[city.city] = Map<String, dynamic>.from(rawData);
-      }
-      isWeatherDataLoaded.value = true;
-    } catch (e) {
-      debugPrint('Failed to load weather data for ${city.city}: $e');
-      isWeatherDataLoaded.value = false;
-    }
-  }
-
-  Future<void> _refreshWeatherData() async {
-    final currentCity = selectedCity.value;
-    if (currentCity == null) return;
-
-    try {
-      final (weather, forecast) = await getCurrentWeather(
-        lat: currentCity.latitude,
-        lon: currentCity.longitude,
-      );
-      conditionController.updateWeatherData([weather], 0, currentCity.city);
-      conditionController.updateWeeklyForecast(forecast);
-
-      final rawData = getCityRawData(currentCity.city);
-      if (rawData != null) {
-        rawForecastData.value = Map<String, dynamic>.from(rawData);
-        _rawDataStorage[currentCity.city] = Map<String, dynamic>.from(rawData);
-      }
-    } catch (e) {
-      debugPrint('Auto-update failed: $e');
     }
   }
 
@@ -204,13 +137,6 @@ class HomeController extends GetxController with ConnectivityMixin {
   String get selectedCityName =>
       selectedCity.value?.city ?? splashController.selectedCityName;
   bool get isAppReady => splashController.isAppReady;
-
-  Map<String, dynamic>? get currentHourData =>
-      fetchCurrentHour(rawForecastData);
-
-  Map<String, dynamic>? getCityRawData(String cityName) {
-    return _rawDataStorage[cityName];
-  }
 
   static void cacheCityData(String cityName, Map<String, dynamic> data) {
     _rawDataStorage[cityName] = data;

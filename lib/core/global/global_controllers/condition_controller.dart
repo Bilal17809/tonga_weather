@@ -45,16 +45,6 @@ class ConditionController extends GetxController {
     }).toList();
   }
 
-  void updateRawForecastData(Map<String, dynamic> data) {
-    rawForecastData.value = data;
-  }
-
-  Map<String, dynamic>? getForecastForDay(int index) {
-    return (index >= 0 && index < weeklyForecast.length)
-        ? weeklyForecast[index]
-        : null;
-  }
-
   void clearWeatherData() {
     mainCityWeather.value = null;
     selectedCitiesWeather.clear();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tonga_weather/core/global/global_services/load_weather_service.dart';
 import 'package:tonga_weather/core/utils/date_time_util.dart';
 import 'package:tonga_weather/presentation/home/controller/home_controller.dart';
 import '../../../../core/common_widgets/custom_appbar.dart';
@@ -18,6 +19,7 @@ class WeatherHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final homeController = Get.find<HomeController>();
+    final weatherService = Get.find<LoadWeatherService>();
     return Obx(
       () => Container(
         decoration: roundedBottomDecor(context),
@@ -31,7 +33,17 @@ class WeatherHeader extends StatelessWidget {
                 subtitle: DateTimeUtils.getFormattedCurrentDate(),
                 actions: [
                   IconActionButton(
-                    onTap: () => Get.to(const CitiesView()),
+                    onTap: () async {
+                      final selectedCity = await Get.to(
+                        () => const CitiesView(),
+                      );
+                      if (selectedCity != null) {
+                        homeController.selectedCity.value = selectedCity;
+                        await weatherService.loadWeatherForAllCities([
+                          selectedCity,
+                        ], selectedCity: selectedCity);
+                      }
+                    },
                     icon: Icons.add,
                     color: getIconColor(context),
                     size: secondaryIcon(context),

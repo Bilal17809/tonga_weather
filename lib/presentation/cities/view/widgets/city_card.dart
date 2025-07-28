@@ -16,16 +16,23 @@ class CityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final HomeController homeController = Get.find();
+    final HomeController homeController = Get.find<HomeController>();
 
     return Obx(() {
       final isCurrentlySelectedCity =
-          homeController.selectedCity.value?.city == city.city;
+          homeController.selectedCity.value?.city == city.cityAscii;
+      final weather =
+          controller.conditionController.allCitiesWeather[city.cityAscii];
+      final temp = weather?.temperature.round().toString() ?? '--';
+      final condition = weather?.condition ?? 'Loading...';
+      final airQuality = weather?.airQuality != null
+          ? 'AQI ${weather!.airQuality!.calculatedAqi}'
+          : 'Loading...';
 
       return GestureDetector(
         onTap: () async {
           await controller.selectCity(city);
-          Get.back();
+          Get.back(result: city);
         },
         child: Container(
           margin: const EdgeInsets.only(bottom: kElementGap),
@@ -64,7 +71,7 @@ class CityCard extends StatelessWidget {
                       ),
                       const SizedBox(height: kElementInnerGap),
                       Text(
-                        controller.getAirQualityForCity(city),
+                        airQuality,
                         style: bodyMediumStyle(context).copyWith(color: kWhite),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -77,24 +84,17 @@ class CityCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${controller.getTemperatureForCity(city)}°',
-                            style: headlineMediumStyle(
-                              context,
-                            ).copyWith(color: kWhite),
-                          ),
-                          Text(
-                            controller.getConditionForCity(city),
-                            style: bodyMediumStyle(
-                              context,
-                            ).copyWith(color: kWhite),
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
+                      Text(
+                        '$temp°',
+                        style: headlineMediumStyle(
+                          context,
+                        ).copyWith(color: kWhite),
+                      ),
+                      Text(
+                        condition,
+                        style: bodyMediumStyle(context).copyWith(color: kWhite),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),

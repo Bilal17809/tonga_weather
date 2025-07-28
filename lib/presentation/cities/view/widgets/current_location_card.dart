@@ -24,7 +24,7 @@ class CurrentLocationCard extends StatelessWidget {
         onTap: () async {
           if (currentCity != null) {
             await controller.selectCity(currentCity);
-            Get.back();
+            Get.back(result: currentCity);
           }
         },
         child: Container(
@@ -71,7 +71,7 @@ class CurrentLocationCard extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Text(
-                                currentCity?.city ?? 'Detecting location...',
+                                currentCity?.city ?? 'Error Fetching City',
                                 style: bodyLargeStyle(context).copyWith(
                                   color: kWhite.withValues(alpha: 0.8),
                                 ),

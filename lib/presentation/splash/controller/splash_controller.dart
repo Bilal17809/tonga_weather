@@ -38,7 +38,8 @@ class SplashController extends GetxController with ConnectivityMixin {
   final currentLocationCity = Rx<CityModel?>(null);
   final selectedCity = Rx<CityModel?>(null);
   final isFirstLaunch = true.obs;
-  static final Map<String, Map<String, dynamic>> _rawDataStorage = {};
+  final RxMap<String, Map<String, dynamic>> _rawDataStorage =
+      <String, Map<String, dynamic>>{}.obs;
   var showButton = false.obs;
 
   @override
@@ -49,18 +50,6 @@ class SplashController extends GetxController with ConnectivityMixin {
         context: Get.context!,
         onConnected: () async {
           await _initializeApp();
-          // final savedCityJson = await localStorage.getString('selected_city');
-          // final hasCurrentLocation =
-          //     await localStorage.getBool('has_current_location') ?? false;
-          // isFirstLaunch.value = savedCityJson == null || !hasCurrentLocation;
-          // if(savedCityJson!.isEmpty){
-          //   await loadWeatherService.loadWeatherForAllCities(allCities);
-          //   // await loadWeatherService.loadWeatherData(savedCityJson.value);
-          // }else
-          //
-          // print(
-          //   '#################################### ${conditionController.allCitiesWeather}',
-          // );
         },
       );
     });
@@ -70,13 +59,10 @@ class SplashController extends GetxController with ConnectivityMixin {
     try {
       isLoading.value = true;
       isDataLoaded.value = false;
-
       allCities.value = await cityService.loadAllCities();
       await _checkFirstLaunch();
-
       currentLocationCity.value = await currentLocationService
           .getCurrentLocationCity(allCities);
-
       if (isFirstLaunch.value) {
         await _setupFirstLaunch();
       } else {
@@ -89,8 +75,8 @@ class SplashController extends GetxController with ConnectivityMixin {
       await loadWeatherService.loadWeatherForAllCities(
         allCities,
         selectedCity: selectedCity.value,
+        currentLocationCity: currentLocationCity.value,
       );
-
       isDataLoaded.value = true;
     } catch (e) {
       debugPrint('${AppExceptions().errorAppInit}: $e');
@@ -120,17 +106,16 @@ class SplashController extends GetxController with ConnectivityMixin {
       selectedCity.value = currentCity;
     } else {
       final nukualofa = allCities.firstWhere(
-        (city) => city.city.toLowerCase() == 'nukualofa',
+        (city) => city.cityAscii.toLowerCase() == 'nukualofa',
         orElse: () => allCities.first,
       );
       selectedCity.value = nukualofa;
     }
-
     await cityStorageService.saveSelectedCity(selectedCity.value);
     await localStorage.setBool('has_current_location', currentCity != null);
   }
 
-  String get selectedCityName => selectedCity.value?.city ?? 'Loading...';
+  String get selectedCityName => selectedCity.value?.cityAscii ?? 'Loading...';
   bool get isAppReady => isDataLoaded.value;
   CityModel? get currentCity => currentLocationCity.value;
   CityModel? get chosenCity => selectedCity.value;
