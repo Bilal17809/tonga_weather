@@ -26,8 +26,8 @@ class HomeController extends GetxController with ConnectivityMixin {
   final selectedCities = <CityModel>[].obs;
   final selectedCity = Rx<CityModel?>(null);
   final scrollController = ScrollController();
-  static final Map<String, Map<String, dynamic>> _rawDataStorage = {};
-  final rawForecastData = <String, dynamic>{}.obs;
+  // static final Map<String, Map<String, dynamic>> _rawDataStorage = {};
+  // final rawForecastData = <String, dynamic>{}.obs;
   final isWeatherDataLoaded = false.obs;
   Timer? _autoUpdateTimer;
 
@@ -109,7 +109,7 @@ class HomeController extends GetxController with ConnectivityMixin {
       selectedCity.value?.city ?? splashController.selectedCityName;
   bool get isAppReady => splashController.isAppReady;
 
-  static void cacheCityData(String cityName, Map<String, dynamic> data) {
-    _rawDataStorage[cityName] = data;
-  }
+  // static void cacheCityData(String cityName, Map<String, dynamic> data) {
+  //   _rawDataStorage[cityName] = data;
+  // }
 }

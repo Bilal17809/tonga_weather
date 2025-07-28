@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tonga_weather/presentation/splash/controller/splash_controller.dart';
 import '../../../../core/common_widgets/common_shimmer.dart';
 import '../../../../core/constants/constant.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -46,9 +47,10 @@ class _HourlyForecastList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final homeController = Get.find<HomeController>();
+    final splashController = Get.find<SplashController>();
     return Obx(() {
       final forecastDays =
-          homeController.rawForecastData['forecast']?['forecastday'];
+          splashController.rawForecastData['forecast']?['forecastday'];
       final todayData = (forecastDays as List?)?.firstOrNull;
       final hourlyList = todayData?['hour'] as List? ?? [];
       final now = DateTime.now();

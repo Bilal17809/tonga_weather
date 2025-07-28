@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
+import 'package:tonga_weather/presentation/splash/controller/splash_controller.dart';
 import '../../core/common/app_exceptions.dart';
 import '../model/weather_model.dart';
 import '../model/forecast_model.dart';
@@ -23,11 +24,13 @@ class OnlineDataSource {
       final data = jsonDecode(response.body);
       final cityName = data['location']['name'] as String?;
       if (cityName != null) {
-        HomeController.cacheCityData(cityName, data);
+        final splashController = Get.find<SplashController>();
+        splashController.cacheCityData(cityName, data);
       }
       final homeController = Get.find<HomeController>();
-      homeController.rawForecastData.value = data;
-
+      final splashController = Get.find<SplashController>();
+      // homeController.rawForecastData.value = data;
+      splashController.rawForecastData.value = data;
       final current = WeatherModel.fromForecastJson(data);
       final forecastDays = data['forecast']['forecastday'] as List;
       final forecast = forecastDays
