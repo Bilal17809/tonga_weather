@@ -45,14 +45,6 @@ class ConditionController extends GetxController {
     }).toList();
   }
 
-  void clearWeatherData() {
-    mainCityWeather.value = null;
-    selectedCitiesWeather.clear();
-    weeklyForecast.clear();
-    mainCityName.value = '';
-    rawForecastData.clear();
-  }
-
   String _formatTemp(num? temp) => temp != null ? '${temp.round()}' : '--';
 
   String _getTodayForecastValue(String key) {

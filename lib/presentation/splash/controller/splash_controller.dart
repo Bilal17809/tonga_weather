@@ -38,8 +38,8 @@ class SplashController extends GetxController with ConnectivityMixin {
   final currentLocationCity = Rx<CityModel?>(null);
   final selectedCity = Rx<CityModel?>(null);
   final isFirstLaunch = true.obs;
-  final RxMap<String, Map<String, dynamic>> _rawDataStorage =
-      <String, Map<String, dynamic>>{}.obs;
+  // final RxMap<String, dynamic> _rawDataStorage =
+  //     <String, Map<String, dynamic>>{}.obs;
   var showButton = false.obs;
 
   @override
@@ -120,6 +120,6 @@ class SplashController extends GetxController with ConnectivityMixin {
   CityModel? get currentCity => currentLocationCity.value;
   CityModel? get chosenCity => selectedCity.value;
   bool get isFirstTime => isFirstLaunch.value;
-  Map<String, dynamic> get rawWeatherData =>
-      _rawDataStorage[selectedCityName] ?? {};
+  // Map<String, dynamic> get rawWeatherData =>
+  //     _rawDataStorage[selectedCityName] ?? {};
 }

@@ -30,17 +30,10 @@ class CitiesController extends GetxController {
       await Future.delayed(const Duration(milliseconds: 50));
     }
     filteredCities.value = splashController.allCities;
-    _initializeRawForecastData();
 
     searchController.addListener(() {
       searchCities(searchController.text);
     });
-  }
-
-  void _initializeRawForecastData() {
-    rawForecastData.value = Map<String, dynamic>.from(
-      splashController.rawWeatherData,
-    );
   }
 
   void searchCities(String query) {

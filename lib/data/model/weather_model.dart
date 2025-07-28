@@ -65,18 +65,4 @@ class WeatherModel {
       airQuality: airQuality,
     );
   }
-
-  // factory WeatherModel.empty(String cityName) {
-  //   return WeatherModel(
-  //     cityName: cityName,
-  //     temperature: 0.0,
-  //     condition: 'No data',
-  //     humidity: 0,
-  //     windSpeed: 0.0,
-  //     chanceOfRain: 0,
-  //     iconUrl: '',
-  //     code: 0,
-  //     airQuality: null,
-  //   );
-  // }
 }

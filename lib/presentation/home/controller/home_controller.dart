@@ -4,9 +4,7 @@ import 'package:get/get.dart';
 import 'package:tonga_weather/core/global/global_controllers/condition_controller.dart';
 import 'package:tonga_weather/core/global/global_services/city_storage_service.dart';
 import 'package:tonga_weather/core/global/global_services/connectivity_service.dart';
-import 'package:tonga_weather/core/utils/fetch_current_hour.dart';
 import 'package:tonga_weather/data/model/city_model.dart';
-import '../../../core/common/app_exceptions.dart';
 import '../../../core/constants/constant.dart';
 import '../../../core/global/global_services/load_weather_service.dart';
 import '../../splash/controller/splash_controller.dart';
@@ -36,33 +34,22 @@ class HomeController extends GetxController with ConnectivityMixin {
   @override
   void onInit() async {
     super.onInit();
-    print('[HomeController] onInit called');
     final fallbackCity = splashController.currentCity;
     final cities = await cityStorageService.loadSelectedCities(fallbackCity);
-    print(
-      '[HomeController] Loaded cities: ${cities.map((e) => e.city).toList()}',
-    );
 
     if (cities.isEmpty) {
       while (!splashController.isAppReady) {
         await Future.delayed(const Duration(milliseconds: 50));
       }
       final splashSelectedCity = splashController.chosenCity;
-      print(
-        '[HomeController] Using splash selected city: ${splashSelectedCity?.city}',
-      );
       if (splashSelectedCity != null) {
         selectedCities.value = [splashSelectedCity];
         await _initializeSelectedCity(splashSelectedCity);
       }
     } else {
-      print(
-        '[HomeController] Using stored selected city: ${cities.first.city}',
-      );
       selectedCities.value = cities;
       await _initializeSelectedCity(cities.first);
     }
-
     _startAutoUpdate();
     _setupAutoScroll();
   }
@@ -110,26 +97,10 @@ class HomeController extends GetxController with ConnectivityMixin {
   }
 
   Future<void> _initializeSelectedCity(CityModel city) async {
-    print(
-      '[HomeController] _initializeSelectedCity called for: ${city.cityAscii}',
-    );
     while (!splashController.isAppReady) {
       await Future.delayed(const Duration(milliseconds: 50));
     }
-
     selectedCity.value = city;
-    final cityData = _rawDataStorage[city.cityAscii];
-
-    if (cityData != null) {
-      print(
-        '##############################[HomeController] Found cached data for: ${city.cityAscii}',
-      );
-      rawForecastData.value = Map<String, dynamic>.from(cityData);
-    } else {
-      print(
-        '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@[HomeController] No cached data found for: ${city.cityAscii}',
-      );
-    }
   }
 
   List<CityModel> get allCities => splashController.allCities;

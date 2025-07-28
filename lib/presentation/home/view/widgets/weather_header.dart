@@ -64,16 +64,18 @@ class WeatherHeader extends StatelessWidget {
 
 class _TemperatureSection extends StatelessWidget {
   const _TemperatureSection();
-
   @override
   Widget build(BuildContext context) {
     final homeController = Get.find<HomeController>();
 
     return Obx(() {
-      final currentData = homeController.rawForecastData['current'];
-      final temp = currentData != null
-          ? currentData['temp_c']?.round().toString()
-          : '--';
+      final selectedCity = homeController.selectedCity.value;
+      final weather = selectedCity != null
+          ? homeController.conditionController.allCitiesWeather[selectedCity
+                .cityAscii]
+          : null;
+
+      final temp = weather?.temperature.round().toString() ?? '--';
 
       return Padding(
         padding: kContentPadding,
@@ -86,7 +88,7 @@ class _TemperatureSection extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(temp!, style: headlineLargeStyle(context)),
+                Text(temp, style: headlineLargeStyle(context)),
                 Text('°', style: headlineLargeStyle(context)),
               ],
             ),
