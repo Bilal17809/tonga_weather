@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/widget_root"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:background="@drawable/widget_background">
+
+    <!-- City Name -->
+    <TextView
+        android:id="@+id/cityNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="Loading..."
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:shadowColor="#80000000"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2" />
+
+    <!-- Weather Icon -->
+    <ImageView
+        android:id="@+id/weatherIconImageView"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/cityNameTextView"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_toStartOf="@id/temperatureTextView"
+        android:contentDescription="Weather Icon"
+        android:src="@drawable/ic_weather_default"
+        android:scaleType="centerInside" />
+
+    <!-- Temperature -->
+    <TextView
+        android:id="@+id/temperatureTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cityNameTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:text="--°"
+        android:textColor="#FFFFFF"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:shadowColor="#80000000"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2" />
+
+    <!-- Weather Condition -->
+    <TextView
+        android:id="@+id/conditionTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/temperatureTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="4dp"
+        android:text="Loading..."
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:shadowColor="#80000000"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2" />
+
+    <!-- Min/Max Temperature -->
+    <TextView
+        android:id="@+id/minMaxTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/conditionTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="4dp"
+        android:text="--°/--°"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        android:shadowColor="#80000000"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2" />
+
+</RelativeLayout>

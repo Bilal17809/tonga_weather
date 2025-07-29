@@ -32,8 +32,12 @@ class CityCard extends StatelessWidget {
       return GestureDetector(
         onTap: () async {
           await controller.selectCity(city);
-          Get.back(result: city);
+          if (controller.splashController.selectedCity.value?.latLonKey ==
+              city.latLonKey) {
+            Get.back(result: city);
+          }
         },
+
         child: Container(
           margin: const EdgeInsets.only(bottom: kElementGap),
           decoration: roundedStylizedDecor(context).copyWith(

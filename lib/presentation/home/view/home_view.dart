@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:panara_dialogs/panara_dialogs.dart';
 import 'package:tonga_weather/core/theme/app_theme.dart';
 import 'package:tonga_weather/presentation/home/controller/home_controller.dart';
+import 'package:tonga_weather/presentation/home/view/widgets/animated_bg_builder.dart';
 import 'package:tonga_weather/presentation/home/view/widgets/weather_body.dart';
 import 'package:tonga_weather/presentation/home/view/widgets/weather_header.dart';
 import '../../../core/common_widgets/custom_drawer.dart';
@@ -14,16 +15,14 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final HomeController homeController = Get.find();
+    final homeController = Get.find<HomeController>();
 
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, value) async {
         if (didPop) return;
         final shouldExit = await _showExitConfirmation(context);
-        if (shouldExit == true) {
-          SystemNavigator.pop();
-        }
+        if (shouldExit == true) SystemNavigator.pop();
       },
       child: Scaffold(
         key: globalKey,
@@ -31,10 +30,10 @@ class HomeView extends StatelessWidget {
         onDrawerChanged: (isOpen) {
           homeController.isDrawerOpen.value = isOpen;
         },
-        body: Column(
-          children: const [
-            WeatherHeader(),
-            Expanded(child: SingleChildScrollView(child: WeatherBody())),
+        body: Stack(
+          children: [
+            AnimatedBgImageBuilder(),
+            Column(children: const [WeatherHeader(), WeatherBody()]),
           ],
         ),
       ),

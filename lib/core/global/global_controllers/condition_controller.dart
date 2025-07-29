@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import '../../../data/model/weather_model.dart';
 import '../../../data/model/forecast_model.dart';
 import '../../utils/date_time_util.dart';
+import '../global_services/android_widet_service.dart';
 
 class ConditionController extends GetxController {
   final mainCityWeather = Rx<WeatherModel?>(null);
@@ -26,6 +27,9 @@ class ConditionController extends GetxController {
     mainCityWeather.value = (mainIndex < weatherList.length)
         ? weatherList[mainIndex]
         : null;
+    if (mainCityWeather.value != null) {
+      WidgetUpdateManager.updateWeatherWidget();
+    }
   }
 
   void updateWeeklyForecast(List<ForecastModel> forecastList) {
@@ -43,6 +47,9 @@ class ConditionController extends GetxController {
         'chanceOfRain': f.chanceOfRain,
       };
     }).toList();
+    if (mainCityWeather.value != null && mainCityName.value.isNotEmpty) {
+      WidgetUpdateManager.updateWeatherWidget();
+    }
   }
 
   String _formatTemp(num? temp) => temp != null ? '${temp.round()}' : '--';

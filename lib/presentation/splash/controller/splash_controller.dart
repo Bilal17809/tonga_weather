@@ -11,6 +11,7 @@ import '../../../core/global/global_services/connectivity_service.dart';
 import '../../../core/local_storage/local_storage.dart';
 import '../../../domain/use_cases/get_current_weather.dart';
 import '../../../data/model/city_model.dart';
+import '../../home/controller/home_controller.dart';
 
 class SplashController extends GetxController with ConnectivityMixin {
   final GetWeatherAndForecast getCurrentWeather;
@@ -80,6 +81,7 @@ class SplashController extends GetxController with ConnectivityMixin {
       );
       _updateRawForecastDataForCurrentCity();
       isDataLoaded.value = true;
+      Get.find<HomeController>().isWeatherDataLoaded.value = true;
     } catch (e) {
       debugPrint('${AppExceptions().errorAppInit}: $e');
       isDataLoaded.value = true;
@@ -122,18 +124,19 @@ class SplashController extends GetxController with ConnectivityMixin {
   CityModel? get currentCity => currentLocationCity.value;
   CityModel? get chosenCity => selectedCity.value;
   bool get isFirstTime => isFirstLaunch.value;
-  Map<String, dynamic> get rawWeatherData =>
-      _rawDataStorage[selectedCityName] ?? {};
-  void cacheCityData(String cityName, Map<String, dynamic> data) {
-    _rawDataStorage[cityName] = data;
+  Map<String, dynamic> get rawWeatherData {
+    final key = selectedCity.value?.latLonKey ?? selectedCityName;
+    return _rawDataStorage[key] ?? {};
+  }
+
+  void cacheCityData(String key, Map<String, dynamic> data) {
+    _rawDataStorage[key] = data;
   }
 
   void _updateRawForecastDataForCurrentCity() {
-    final cityName = selectedCityName;
-    if (_rawDataStorage.containsKey(cityName)) {
-      rawForecastData.value = Map<String, dynamic>.from(
-        _rawDataStorage[cityName]!,
-      );
+    final key = selectedCity.value?.latLonKey ?? selectedCityName;
+    if (_rawDataStorage.containsKey(key)) {
+      rawForecastData.value = Map<String, dynamic>.from(_rawDataStorage[key]!);
     }
   }
 }

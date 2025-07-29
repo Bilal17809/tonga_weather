@@ -50,7 +50,9 @@ BoxDecoration roundedDecor(BuildContext context) => BoxDecoration(
   ],
 );
 BoxDecoration roundedForecastDecor(BuildContext context) => BoxDecoration(
-  color: isDarkMode(context) ? getSecondaryColor(context) : kWhite,
+  color: isDarkMode(context)
+      ? secondaryColorLight.withValues(alpha: 0.6)
+      : kWhite,
   borderRadius: BorderRadius.circular(10),
 );
 
@@ -89,43 +91,14 @@ BoxDecoration roundedBottomDecor(BuildContext context) => BoxDecoration(
     BoxShadow(
       color: isDarkMode(context)
           ? darkBgColor.withValues(alpha: 0.3)
-          : primaryColorLight.withValues(alpha: 0.3),
+          : primaryColorLight.withValues(alpha: 0.15),
       blurRadius: 6,
       spreadRadius: 1,
-      offset: Offset(0, 2),
+      offset: Offset(0, 1),
     ),
   ],
 );
 
-// BoxDecoration getDynamicBoxDecoration({
-//   required BuildContext context,
-//   bool isCurrentHour = false,
-//   bool isIndexZero = false,
-// }) {
-//   final isDark = isDarkMode(context);
-//
-//   return BoxDecoration(
-//     color: (isCurrentHour || isIndexZero)
-//         ? null
-//         : (isDark ? kWhite.withValues(alpha: 0.1) : lightBgColor),
-//     gradient: (isCurrentHour || isIndexZero)
-//         ? kContainerGradient(context)
-//         : null,
-//     border: isCurrentHour ? Border.all(color: primaryColor, width: 2) : null,
-//     borderRadius: BorderRadius.circular(24),
-//     boxShadow: [
-//       BoxShadow(
-//         color: isDark
-//             ? darkBgColor.withValues(alpha: 0.3)
-//             : primaryColor.withValues(alpha: 0.3),
-//         blurRadius: 6,
-//         spreadRadius: 1,
-//         offset: const Offset(0, 2),
-//       ),
-//     ],
-//   );
-// }
-//
 BoxDecoration roundedSelectionDecoration(
   BuildContext context, {
   required bool isSelected,
@@ -135,8 +108,8 @@ BoxDecoration roundedSelectionDecoration(
   return BoxDecoration(
     color: isDark
         ? (isSelected
-              ? kWhite.withValues(alpha: 0.2)
-              : kWhite.withValues(alpha: 0.1))
+              ? kWhite.withValues(alpha: 0.5)
+              : kWhite.withValues(alpha: 0.25))
         : (isSelected ? Color(0xFF8ABAF3) : Color(0xFF538ED9)),
     borderRadius: BorderRadius.circular(28),
     boxShadow: [
@@ -168,8 +141,8 @@ Color getTextColor(BuildContext context) =>
 Color getTitleTextColor(BuildContext context) =>
     isDarkMode(context) ? textWhiteColor : primaryColorLight;
 
-Color getButtonTextColor(BuildContext context) =>
-    isDarkMode(context) ? kWhite : secondaryColorLight;
+// Color getButtonTextColor(BuildContext context) =>
+//     isDarkMode(context) ? kWhite : secondaryColorLight;
 
 Color getSubTextColor(BuildContext context) =>
     isDarkMode(context) ? textWhiteColor : kBlack;

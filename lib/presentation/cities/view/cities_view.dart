@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:tonga_weather/core/theme/app_theme.dart';
 import 'package:tonga_weather/presentation/cities/view/widgets/city_card.dart';
 import 'package:tonga_weather/presentation/cities/view/widgets/current_location_card.dart';
+import 'package:tonga_weather/presentation/home/view/widgets/animated_bg_builder.dart';
 import '../../../core/common_widgets/custom_appbar.dart';
 import '../../../core/common_widgets/search_bar.dart';
 import '../../../core/constants/constant.dart';
@@ -17,78 +18,98 @@ class CitiesView extends StatelessWidget {
   Widget build(BuildContext context) {
     final CitiesController controller = Get.find();
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            CustomAppBar(subtitle: 'Manage Cities'),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(kBodyHp, kBodyHp, kBodyHp, 0),
-              child: Obx(() {
-                final dark = isDarkMode(context);
-                return SearchBarField(
-                  controller: controller.searchController,
-                  onSearch: (value) => controller.searchCities(value),
-                  backgroundColor: dark
-                      ? kWhite.withValues(alpha: 0.1)
-                      : getPrimaryColor(context),
-                  borderColor: controller.hasSearchError.value
-                      ? kRed
-                      : getSecondaryColor(context),
-                  iconColor: controller.hasSearchError.value
-                      ? kRed
-                      : getSecondaryColor(context),
-                  textColor: getTextColor(context),
-                );
-              }),
-            ),
-            Obx(
-              () => controller.hasSearchError.value
-                  ? Padding(
+      body: Stack(
+        children: [
+          AnimatedBgImageBuilder(),
+          SafeArea(
+            child: Column(
+              children: [
+                CustomAppBar(subtitle: 'Manage Cities'),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    kBodyHp,
+                    kBodyHp,
+                    kBodyHp,
+                    0,
+                  ),
+                  child: Obx(() {
+                    final dark = isDarkMode(context);
+                    return SearchBarField(
+                      controller: controller.searchController,
+                      onSearch: (value) => controller.searchCities(value),
+                      backgroundColor: dark
+                          ? secondaryColorLight.withValues(alpha: 0.6)
+                          : getPrimaryColor(context),
+                      borderColor: controller.hasSearchError.value
+                          ? kRed
+                          : getSecondaryColor(context),
+                      iconColor: controller.hasSearchError.value
+                          ? kRed
+                          : getSecondaryColor(context),
+                      textColor: getTextColor(context),
+                    );
+                  }),
+                ),
+                Obx(
+                  () => controller.hasSearchError.value
+                      ? Padding(
+                          padding: const EdgeInsets.fromLTRB(
+                            kBodyHp,
+                            kElementInnerGap,
+                            kBodyHp,
+                            0,
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.error_outline,
+                                color: kRed,
+                                size: smallIcon(context),
+                              ),
+                              const SizedBox(width: kElementWidthGap),
+                              Expanded(
+                                child: Text(
+                                  controller.searchErrorMessage.value,
+                                  style: bodyBoldSmallStyle(
+                                    context,
+                                  ).copyWith(color: kRed),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    kBodyHp,
+                    kBodyHp,
+                    kBodyHp,
+                    0,
+                  ),
+                  child: CurrentLocationCard(controller: controller),
+                ),
+                Expanded(
+                  child: Obx(
+                    () => ListView.builder(
                       padding: const EdgeInsets.fromLTRB(
                         kBodyHp,
-                        kElementInnerGap,
+                        0,
                         kBodyHp,
                         0,
                       ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.error_outline,
-                            color: kRed,
-                            size: smallIcon(context),
-                          ),
-                          const SizedBox(width: kElementWidthGap),
-                          Expanded(
-                            child: Text(
-                              controller.searchErrorMessage.value,
-                              style: bodyBoldSmallStyle(
-                                context,
-                              ).copyWith(color: kRed),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : const SizedBox.shrink(),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(kBodyHp, kBodyHp, kBodyHp, 0),
-              child: CurrentLocationCard(controller: controller),
-            ),
-            Expanded(
-              child: Obx(
-                () => ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(kBodyHp, 0, kBodyHp, 0),
-                  itemCount: controller.filteredCities.length,
-                  itemBuilder: (BuildContext context, index) {
-                    final city = controller.filteredCities[index];
-                    return CityCard(controller: controller, city: city);
-                  },
+                      itemCount: controller.filteredCities.length,
+                      itemBuilder: (BuildContext context, index) {
+                        final city = controller.filteredCities[index];
+                        return CityCard(controller: controller, city: city);
+                      },
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

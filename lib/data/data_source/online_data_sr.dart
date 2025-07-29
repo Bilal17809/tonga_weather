@@ -5,7 +5,6 @@ import 'package:tonga_weather/presentation/splash/controller/splash_controller.d
 import '../../core/common/app_exceptions.dart';
 import '../model/weather_model.dart';
 import '../model/forecast_model.dart';
-import '../../presentation/home/controller/home_controller.dart';
 
 class OnlineDataSource {
   static const baseUrl = "https://api.weatherapi.com/v1/forecast.json";
@@ -22,14 +21,9 @@ class OnlineDataSource {
     final response = await http.get(uri);
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      final cityName = data['location']['name'] as String?;
-      if (cityName != null) {
-        final splashController = Get.find<SplashController>();
-        splashController.cacheCityData(cityName, data);
-      }
-      final homeController = Get.find<HomeController>();
       final splashController = Get.find<SplashController>();
-      // homeController.rawForecastData.value = data;
+      final latLonKey = '${lat.toStringAsFixed(4)},${lon.toStringAsFixed(4)}';
+      splashController.cacheCityData(latLonKey, data);
       splashController.rawForecastData.value = data;
       final current = WeatherModel.fromForecastJson(data);
       final forecastDays = data['forecast']['forecastday'] as List;

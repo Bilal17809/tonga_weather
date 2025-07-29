@@ -6,7 +6,6 @@ import '../../../../core/constants/constant.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_styles.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../gen/assets.gen.dart';
 import '../../../daily_forecast/view/daily_forecast_view.dart';
 import '../../controller/home_controller.dart';
 
@@ -15,28 +14,30 @@ class WeatherBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Column(
-        children: [
-          Image.asset(Assets.homeIcon.path, width: mobileWidth(context) * 0.5),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              GestureDetector(
-                onTap: () => Get.to(() => const DailyForecastView()),
-                child: Text(
-                  '7 Day Forecast >',
-                  style: headlineSmallStyle(
-                    context,
-                  ).copyWith(color: getButtonTextColor(context)),
+    return Expanded(
+      child: SafeArea(
+        top: false,
+        bottom: true,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () => Get.to(() => const DailyForecastView()),
+                  child: Text(
+                    '7 Day Forecast >',
+                    style: headlineSmallStyle(context).copyWith(color: kWhite),
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: kElementInnerGap),
-          const _HourlyForecastList(),
-        ],
+              ],
+            ),
+            const SizedBox(height: kElementInnerGap),
+            const _HourlyForecastList(),
+            const SizedBox(height: kBodyHp),
+          ],
+        ),
       ),
     );
   }
@@ -130,7 +131,7 @@ class _HourlyForecast extends StatelessWidget {
               fit: BoxFit.scaleDown,
               child: Text(
                 day,
-                style: titleSmallBoldStyle(context).copyWith(color: kWhite),
+                style: bodyBoldMediumStyle(context).copyWith(color: kWhite),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
@@ -139,8 +140,8 @@ class _HourlyForecast extends StatelessWidget {
             hourData?['condition']?['icon'] != null
                 ? Image.network(
                     'https:${hourData!['condition']['icon']}',
-                    width: primaryIcon(context),
-                    height: primaryIcon(context),
+                    width: mediumIcon(context),
+                    height: mediumIcon(context),
                     fit: BoxFit.contain,
                     errorBuilder: (context, error, stackTrace) => Icon(
                       Icons.wb_sunny,
@@ -150,7 +151,7 @@ class _HourlyForecast extends StatelessWidget {
                   )
                 : Icon(
                     Icons.wb_sunny,
-                    size: primaryIcon(context),
+                    size: mediumIcon(context),
                     color: kWhite,
                   ),
             const SizedBox(height: kElementInnerGap),
@@ -158,7 +159,7 @@ class _HourlyForecast extends StatelessWidget {
               fit: BoxFit.scaleDown,
               child: Text(
                 hourData != null ? '${hourData!['temp_c'].round()}°' : '0°',
-                style: titleSmallBoldStyle(context).copyWith(color: kWhite),
+                style: bodyBoldMediumStyle(context).copyWith(color: kWhite),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),

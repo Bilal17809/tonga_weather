@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../gen/assets.gen.dart';
 import '../constants/constant.dart';
 import '../local_storage/local_storage.dart';
 import '../theme/app_colors.dart';
@@ -30,7 +29,7 @@ class CustomDrawer extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(top: kElementGap),
                       child: Image.asset(
-                        Assets.homeIcon.path,
+                        'images/clear.png',
                         height: primaryIcon(context),
                       ),
                     ),

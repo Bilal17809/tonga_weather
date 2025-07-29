@@ -77,7 +77,7 @@ class ConnectivityService extends GetxService {
     try {
       final result = await InternetAddress.lookup(
         'google.com',
-      ).timeout(const Duration(seconds: 5));
+      ).timeout(const Duration(seconds: 3));
       final hasInternet = result.isNotEmpty && result[0].rawAddress.isNotEmpty;
 
       if (_isConnected.value != hasInternet) {
@@ -191,13 +191,13 @@ class ConnectivityService extends GetxService {
           .catchError((e) => false);
 
       if (!hasInternet) {
-        await showNoInternetDialog(context, onRetry: onRetry);
+        await showNoInternetDialog(Get.context!, onRetry: onRetry);
         return false;
       }
       return true;
     } catch (e) {
       debugPrint('[ConnectivityService] checkInternetWithDialog failed: $e');
-      await showNoInternetDialog(context, onRetry: onRetry);
+      await showNoInternetDialog(Get.context!, onRetry: onRetry);
       return false;
     }
   }
@@ -265,7 +265,7 @@ mixin ConnectivityMixin on GetxController {
     }
   }
 
-  Future<void> initWithConnectivityCheck({
+  Future<bool> initWithConnectivityCheck({
     required BuildContext context,
     required Future<void> Function() onConnected,
   }) async {
@@ -277,8 +277,10 @@ mixin ConnectivityMixin on GetxController {
 
     if (hasInternet) {
       await onConnected();
+      return true;
     } else {
       debugPrint(AppExceptions().noInternet);
+      return false;
     }
   }
 

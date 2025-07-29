@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tonga_weather/core/global/global_services/load_weather_service.dart';
 import 'package:tonga_weather/core/utils/date_time_util.dart';
+import 'package:tonga_weather/core/utils/weather_utils.dart';
 import 'package:tonga_weather/presentation/home/controller/home_controller.dart';
 import '../../../../core/common_widgets/custom_appbar.dart';
 import '../../../../core/common_widgets/icon_buttons.dart';
@@ -10,7 +11,6 @@ import '../../../../core/global/global_controllers/condition_controller.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_styles.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../gen/assets.gen.dart';
 import '../../../cities/view/cities_view.dart';
 
 class WeatherHeader extends StatelessWidget {
@@ -83,7 +83,15 @@ class _TemperatureSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(Assets.cloudy.path, width: primaryIcon(context)),
+            Flexible(
+              child: Image.asset(
+                WeatherUtils.getWeatherIconPath(
+                  WeatherUtils.getWeatherIcon(weather?.code ?? 1000),
+                ),
+                width: primaryIcon(context),
+              ),
+            ),
+
             const SizedBox(width: kElementGap),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,

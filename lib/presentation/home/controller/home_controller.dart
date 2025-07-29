@@ -26,32 +26,33 @@ class HomeController extends GetxController with ConnectivityMixin {
   final selectedCities = <CityModel>[].obs;
   final selectedCity = Rx<CityModel?>(null);
   final scrollController = ScrollController();
-  // static final Map<String, Map<String, dynamic>> _rawDataStorage = {};
-  // final rawForecastData = <String, dynamic>{}.obs;
   final isWeatherDataLoaded = false.obs;
   Timer? _autoUpdateTimer;
 
   @override
   void onInit() async {
     super.onInit();
-    final fallbackCity = splashController.currentCity;
-    final cities = await cityStorageService.loadSelectedCities(fallbackCity);
-
-    if (cities.isEmpty) {
-      while (!splashController.isAppReady) {
-        await Future.delayed(const Duration(milliseconds: 50));
-      }
-      final splashSelectedCity = splashController.chosenCity;
-      if (splashSelectedCity != null) {
-        selectedCities.value = [splashSelectedCity];
-        await _initializeSelectedCity(splashSelectedCity);
-      }
-    } else {
-      selectedCities.value = cities;
-      await _initializeSelectedCity(cities.first);
+    while (!splashController.isAppReady) {
+      await Future.delayed(const Duration(milliseconds: 50));
     }
+    final allCities = splashController.allCities;
+    final fallbackCity = splashController.currentCity;
+    final selectedCityFromStorage = await cityStorageService.loadSelectedCity(
+      allCities: allCities,
+      currentLocationCity: fallbackCity,
+    );
+    selectedCities.value = [selectedCityFromStorage];
+    await _initializeSelectedCity(selectedCityFromStorage);
     _startAutoUpdate();
     _setupAutoScroll();
+    ever(splashController.selectedCity, (CityModel? newCity) async {
+      if (newCity != null &&
+          selectedCity.value?.latLonKey != newCity.latLonKey) {
+        selectedCities.value = [newCity];
+        await _initializeSelectedCity(newCity);
+        _performAutoScroll();
+      }
+    });
   }
 
   @override
@@ -72,8 +73,9 @@ class HomeController extends GetxController with ConnectivityMixin {
   }
 
   void _performAutoScroll() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    Timer.periodic(const Duration(milliseconds: 200), (timer) {
       if (!scrollController.hasClients) return;
+      timer.cancel();
       final context = scrollController.position.context.storageContext;
       final double itemWidth = mobileWidth(context) * 0.22;
       final int currentHour = DateTime.now().hour;
@@ -108,8 +110,4 @@ class HomeController extends GetxController with ConnectivityMixin {
   String get selectedCityName =>
       selectedCity.value?.city ?? splashController.selectedCityName;
   bool get isAppReady => splashController.isAppReady;
-
-  // static void cacheCityData(String cityName, Map<String, dynamic> data) {
-  //   _rawDataStorage[cityName] = data;
-  // }
 }

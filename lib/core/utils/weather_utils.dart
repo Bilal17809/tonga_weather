@@ -1,22 +1,23 @@
-import '../../gen/assets.gen.dart';
-
 class WeatherUtils {
   static const String _defaultIconUrl =
       'https://cdn.weatherapi.com/weather/128x128/day/116.png';
 
-  // static final Map<String, String> _homeIcons = {
-  //   'precipitation': Assets.precipitationUmbrella.path,
-  //   'humidity': Assets..humidityDroplet.path,
-  //   'wind': Assets..windy.path,
-  // };
-
   static final Map<String, String> _weatherIcon = {
-    'clear': Assets.cloudy.path,
-    'cloudy': Assets.cloudy.path,
-    'rain': Assets.cloudy.path,
-    'snow': Assets.cloudy.path,
-    'thunderstorm': Assets.cloudy.path,
-    'sleet': Assets.cloudy.path,
+    'clear': 'images/clear.png',
+    'cloudy': 'images/cloudy.png',
+    'rain': 'images/rain.png',
+    'snow': 'images/snow.png',
+    'thunderstorm': 'images/thunderstorm.png',
+    'sleet': 'images/sleet.png',
+  };
+
+  static final Map<String, String> _weatherBg = {
+    'clear': 'images/clear-day.jpg',
+    'cloudy': 'images/cloudy-day.jpg',
+    'rain': 'images/rain-day.jpg',
+    'snow': 'images/snow-day.jpg',
+    'thunderstorm': 'images/thunderstorm-day.jpg',
+    'sleet': 'images/sleet-day.jpg',
   };
 
   static String getWeatherIcon(int code) {
@@ -76,11 +77,11 @@ class WeatherUtils {
 
   static String getDefaultIcon() => _defaultIconUrl;
 
-  // static String getHomeIcon(String type) {
-  //   return _homeIcons[type.toLowerCase()] ?? '';
-  // }
-
   static String getWeatherIconPath(String weatherType) {
     return _weatherIcon[weatherType.toLowerCase()] ?? _weatherIcon['clear']!;
+  }
+
+  static String getWeatherBgPath(String weatherType) {
+    return _weatherBg[weatherType.toLowerCase()] ?? _weatherBg['clear']!;
   }
 }

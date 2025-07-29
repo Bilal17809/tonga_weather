@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tonga_weather/core/utils/date_time_util.dart';
 import 'package:tonga_weather/presentation/daily_forecast/view/widgets/triangle.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../home/view/widgets/animated_bg_builder.dart';
 import '../controller/daily_forecast_controller.dart';
 import '../../../core/common_widgets/custom_appbar.dart';
 import '../../../core/common_widgets/icon_buttons.dart';
@@ -22,6 +24,7 @@ class DailyForecastView extends StatelessWidget {
         () => Stack(
           clipBehavior: Clip.none,
           children: [
+            AnimatedBgImageBuilder(),
             Container(
               height: mobileHeight(context) * 0.5,
               decoration: roundedBottomDecor(context),
@@ -161,9 +164,13 @@ class _ForecastRow extends StatelessWidget {
                   width: mediumIcon(context),
                   height: mediumIcon(context),
                   fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) => Icon(
+                    Icons.wb_sunny,
+                    size: mediumIcon(context),
+                    color: kWhite,
+                  ),
                 )
               : Icon(Icons.wb_sunny, size: mediumIcon(context)),
-          // SizedBox(width: mobileWidth(context) * 0.08)
           Spacer(),
           Text(
             '$maxTemp°/$minTemp°',

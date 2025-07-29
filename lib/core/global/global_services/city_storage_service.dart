@@ -25,16 +25,13 @@ class CityStorageService {
   }) async {
     try {
       final savedCityJson = await localStorage.getString('selected_city');
-
       if (savedCityJson != null) {
         final cityData = json.decode(savedCityJson);
         return CityModel.fromJson(cityData);
       }
-
       if (currentLocationCity != null) {
         return currentLocationCity;
       }
-
       return allCities.firstWhere(
         (city) => city.city.toLowerCase() == 'nukualofa',
         orElse: () => allCities.first,
@@ -43,35 +40,5 @@ class CityStorageService {
       debugPrint("${AppExceptions().failToLoad}: $e");
       return allCities.first;
     }
-  }
-
-  Future<void> saveSelectedCities(List<CityModel> cities) async {
-    try {
-      final citiesJson = json.encode(cities.map((c) => c.toJson()).toList());
-      await localStorage.setString('selected_cities', citiesJson);
-    } catch (e) {
-      debugPrint('${AppExceptions().failToSave}: $e');
-    }
-  }
-
-  Future<List<CityModel>> loadSelectedCities(CityModel? fallbackCity) async {
-    try {
-      final selectedCitiesJson = await localStorage.getString(
-        'selected_cities',
-      );
-      if (selectedCitiesJson != null) {
-        final List<dynamic> citiesData = json.decode(selectedCitiesJson);
-        return citiesData.map((data) => CityModel.fromJson(data)).toList();
-      } else if (fallbackCity != null) {
-        // Save fallbackCity as initial selection
-        final fallbackList = [fallbackCity];
-        await saveSelectedCities(fallbackList);
-        return fallbackList;
-      }
-    } catch (e) {
-      debugPrint('${AppExceptions().failToLoad}: $e');
-    }
-
-    return [];
   }
 }

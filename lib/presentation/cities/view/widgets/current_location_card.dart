@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:toastification/toastification.dart';
+import 'package:tonga_weather/core/common_widgets/custom_toast.dart';
 import 'package:tonga_weather/core/theme/app_theme.dart';
+import '../../../../core/common/app_exceptions.dart';
 import '../../../../core/constants/constant.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_styles.dart';
@@ -25,6 +28,15 @@ class CurrentLocationCard extends StatelessWidget {
           if (currentCity != null) {
             await controller.selectCity(currentCity);
             Get.back(result: currentCity);
+          } else {
+            SimpleToast.showCustomToast(
+              context: context,
+              message: AppExceptions().deniedPermission,
+              type: ToastificationType.error,
+              icon: Icons.location_off,
+              primaryColor: kRed,
+            );
+            return;
           }
         },
         child: Container(

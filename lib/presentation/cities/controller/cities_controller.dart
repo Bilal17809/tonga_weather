@@ -1,20 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'dart:convert';
-import '../../../core/common/app_exceptions.dart';
+import 'package:tonga_weather/core/global/global_services/connectivity_service.dart';
 import '../../../core/global/global_controllers/condition_controller.dart';
 import '../../../data/model/city_model.dart';
 import '../../splash/controller/splash_controller.dart';
-import '../../../core/local_storage/local_storage.dart';
 
-class CitiesController extends GetxController {
-  // final LoadWeatherService loadWeatherService = Get.find();
+class CitiesController extends GetxController with ConnectivityMixin {
   final TextEditingController searchController = TextEditingController();
-  final LocalStorage localStorage = LocalStorage();
-
-  final rawForecastData = <String, dynamic>{}.obs;
-  final cityWeatherData = <String, Map<String, String>>{}.obs;
-  final cityAirQualityData = <String, String>{}.obs;
   var hasSearchError = false.obs;
   var searchErrorMessage = ''.obs;
   var filteredCities = <CityModel>[].obs;
@@ -30,7 +22,6 @@ class CitiesController extends GetxController {
       await Future.delayed(const Duration(milliseconds: 50));
     }
     filteredCities.value = splashController.allCities;
-
     searchController.addListener(() {
       searchCities(searchController.text);
     });
@@ -69,26 +60,14 @@ class CitiesController extends GetxController {
     }
   }
 
-  Future<void> addCurrentLocationToSelected(BuildContext context) async {
-    final currentCity = splashController.currentCity;
-    if (currentCity != null) {
-      await selectCity(currentCity);
-    }
-  }
-
   Future<void> selectCity(CityModel city) async {
-    try {
-      final selectedCities = <CityModel>[city];
-      splashController.selectedCity.value = city;
-      final citiesJson = json.encode(
-        selectedCities.map((c) => c.toJson()).toList(),
-      );
-      await localStorage.setString('selected_cities', citiesJson);
-
-      await splashController.cityStorageService.saveSelectedCity(city);
-    } catch (e) {
-      debugPrint('${AppExceptions().failToSelect}: $e');
-    }
+    await initWithConnectivityCheck(
+      context: Get.context!,
+      onConnected: () async {
+        splashController.selectedCity.value = city;
+        await splashController.cityStorageService.saveSelectedCity(city);
+      },
+    );
   }
 
   @override
