@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:tonga_weather/core/constants/constant.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_theme.dart';
 
 class TrianglePainter extends CustomPainter {
   final BuildContext context;
@@ -12,7 +11,9 @@ class TrianglePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = isDarkMode(context) ? getSecondaryColor(context) : kWhite;
+      ..color = isDarkMode(context)
+          ? secondaryColorLight.withValues(alpha: 0.6)
+          : kWhite;
 
     final path = Path();
     path.moveTo(size.width / 2, 0);

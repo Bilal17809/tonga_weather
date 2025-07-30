@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class HomeAnimationController extends GetxController
+class BgAnimationController extends GetxController
     with GetSingleTickerProviderStateMixin {
   late final AnimationController animationController;
   late final Animation<double> animation;

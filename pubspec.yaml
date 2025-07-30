@@ -46,6 +46,7 @@ dependencies:
   loading_animation_widget: ^1.3.0
   html: ^0.15.6
   connectivity_plus: ^6.1.4
+  google_mobile_ads: ^6.0.0
 
 dev_dependencies:
   flutter_test:

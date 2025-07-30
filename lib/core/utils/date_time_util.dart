@@ -10,7 +10,7 @@ class DateTimeUtils {
   }
 
   static DateTime parseLocal(String time) {
-    return DateTime.parse(time).toLocal();
+    return DateTime.parse(time);
   }
 
   static bool isToday(DateTime date) {

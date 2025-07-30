@@ -5,6 +5,8 @@ import 'package:tonga_weather/core/global/global_controllers/condition_controlle
 import 'package:tonga_weather/core/global/global_services/city_storage_service.dart';
 import 'package:tonga_weather/core/global/global_services/connectivity_service.dart';
 import 'package:tonga_weather/data/model/city_model.dart';
+import '../../../ads_manager/banner_ads.dart';
+import '../../../ads_manager/interstitial_ads.dart';
 import '../../../core/constants/constant.dart';
 import '../../../core/global/global_services/load_weather_service.dart';
 import '../../splash/controller/splash_controller.dart';
@@ -32,6 +34,8 @@ class HomeController extends GetxController with ConnectivityMixin {
   @override
   void onInit() async {
     super.onInit();
+    Get.find<InterstitialAdController>().checkAndShowAd();
+    Get.find<BannerAdController>().loadBannerAd('ad1');
     while (!splashController.isAppReady) {
       await Future.delayed(const Duration(milliseconds: 50));
     }

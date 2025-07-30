@@ -66,14 +66,6 @@ class WidgetUpdaterService {
     }
   }
 
-  static Future<void> requestPinWidget() async {
-    try {
-      await _channel.invokeMethod('requestPinWidget');
-    } catch (e) {
-      debugPrint("Request pin error: $e");
-    }
-  }
-
   static Future<bool> isWidgetActive() async {
     try {
       return await _channel.invokeMethod('isWidgetActive') ?? false;

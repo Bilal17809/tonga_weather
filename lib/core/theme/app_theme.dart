@@ -166,7 +166,7 @@ LinearGradient kContainerGradient(BuildContext context) {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: isDarkMode(context)
-        ? [kWhite, kWhite.withValues(alpha: 0.75)]
+        ? [kLightWhite, secondaryColorLight]
         : [primaryColorLight, secondaryColorLight],
     stops: [0.05, 0.85],
   );

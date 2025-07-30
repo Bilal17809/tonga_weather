@@ -1,3 +1,4 @@
+import '../../core/utils/date_time_util.dart';
 import 'aqi_model.dart';
 
 class WeatherModel {
@@ -24,29 +25,29 @@ class WeatherModel {
   });
 
   factory WeatherModel.fromForecastJson(Map<String, dynamic> json) {
-    double windSpeedKmh = 0.0;
-    if (json['current']?['wind_kph'] != null) {
-      windSpeedKmh = (json['current']['wind_kph'] as num).toDouble();
-    }
-
-    String iconUrl = '';
-    if (json['current']?['condition']?['icon'] != null) {
-      iconUrl = 'https:${json['current']['condition']['icon']}';
-    }
+    final currentTime = DateTime.now();
+    final hourlyData =
+        json['forecast']['forecastday'][0]['hour'] as List<dynamic>;
 
     int currentChanceOfRain = 0;
-    if (json['forecast']?['forecastday']?[0]?['hour'] != null) {
-      final currentTime = DateTime.now();
-      final currentHour = currentTime.hour;
-      final hourlyData = json['forecast']['forecastday'][0]['hour'] as List;
-      for (var hour in hourlyData) {
-        final hourTime = DateTime.parse(hour['time']);
-        if (hourTime.hour == currentHour) {
-          currentChanceOfRain = hour['chance_of_rain'] ?? 0;
-          break;
-        }
+    for (var hour in hourlyData) {
+      final hourTime = DateTimeUtils.parseLocal(hour['time']);
+
+      if (hourTime.hour == currentTime.hour &&
+          hourTime.day == currentTime.day &&
+          hourTime.month == currentTime.month &&
+          hourTime.year == currentTime.year) {
+        currentChanceOfRain = hour['chance_of_rain'] ?? 0;
+        break;
       }
     }
+
+    final windSpeedKmh =
+        (json['current']?['wind_kph'] as num?)?.toDouble() ?? 0.0;
+
+    final iconUrl = json['current']?['condition']?['icon'] != null
+        ? 'https:${json['current']['condition']['icon']}'
+        : '';
 
     AirQualityModel? airQuality;
     if (json['current']?['air_quality'] != null) {

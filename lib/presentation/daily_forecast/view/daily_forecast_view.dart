@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tonga_weather/core/utils/date_time_util.dart';
 import 'package:tonga_weather/presentation/daily_forecast/view/widgets/triangle.dart';
+import '../../../ads_manager/banner_ads.dart';
+import '../../../ads_manager/interstitial_ads.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../home/view/widgets/animated_bg_builder.dart';
+import '../../../animation/view/animated_bg_builder.dart';
 import '../controller/daily_forecast_controller.dart';
 import '../../../core/common_widgets/custom_appbar.dart';
 import '../../../core/common_widgets/icon_buttons.dart';
@@ -81,50 +83,55 @@ class DailyForecastView extends StatelessWidget {
               top: mobileHeight(context) * 0.21,
               left: kBodyHp,
               right: kBodyHp,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Transform.translate(
-                    offset: Offset(-mobileWidth(context) * 0.24, 0),
-                    child: CustomPaint(
-                      painter: TrianglePainter(context),
-                      child: SizedBox(
-                        height: smallIcon(context),
-                        width: smallIcon(context),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Transform.translate(
+                      offset: Offset(-mobileWidth(context) * 0.24, 0),
+                      child: CustomPaint(
+                        painter: TrianglePainter(context),
+                        child: SizedBox(
+                          height: smallIcon(context),
+                          width: smallIcon(context),
+                        ),
                       ),
                     ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(kBodyHp),
-                    decoration: roundedForecastDecor(
-                      context,
-                    ).copyWith(borderRadius: BorderRadius.circular(24)),
-                    child: Column(
-                      children: [
-                        Text(
-                          '7 Day Forecast',
-                          style: titleBoldLargeStyle(context),
-                        ),
-                        const SizedBox(height: kElementGap),
-                        if (controller.hasForecastData)
-                          ...controller.forecastData.map(
-                            (dayData) => _ForecastRow(
-                              day: dayData['day'] ?? '',
-                              iconUrl: dayData['iconUrl'] ?? '',
-                              maxTemp: dayData['temp']?.round() ?? 0,
-                              minTemp: dayData['minTemp']?.round() ?? 0,
-                              condition: dayData['condition'] ?? '',
-                            ),
+                    Container(
+                      padding: const EdgeInsets.all(kBodyHp),
+                      decoration: roundedForecastDecor(
+                        context,
+                      ).copyWith(borderRadius: BorderRadius.circular(24)),
+                      child: Column(
+                        children: [
+                          Text(
+                            '7 Day Forecast',
+                            style: titleBoldLargeStyle(context),
                           ),
-                      ],
+                          const SizedBox(height: kElementGap),
+                          if (controller.hasForecastData)
+                            ...controller.forecastData.map(
+                              (dayData) => _ForecastRow(
+                                day: dayData['day'] ?? '',
+                                iconUrl: dayData['iconUrl'] ?? '',
+                                maxTemp: dayData['temp']?.round() ?? 0,
+                                minTemp: dayData['minTemp']?.round() ?? 0,
+                                condition: dayData['condition'] ?? '',
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
         ),
       ),
+      bottomNavigationBar: Get.find<InterstitialAdController>().isAdReady
+          ? const SizedBox()
+          : Obx(() => Get.find<BannerAdController>().getBannerAdWidget('ad2')),
     );
   }
 }

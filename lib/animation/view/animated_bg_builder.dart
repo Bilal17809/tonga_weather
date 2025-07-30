@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tonga_weather/animation/controller/animation_controller.dart';
 import 'package:tonga_weather/core/utils/weather_utils.dart';
 import 'package:tonga_weather/presentation/home/controller/home_controller.dart';
-import 'package:tonga_weather/presentation/home/controller/Home_animation_controller.dart';
-import '../../../../core/constants/constant.dart';
+import '../../core/constants/constant.dart';
 import 'animated_bg_image.dart';
 
 class AnimatedBgImageBuilder extends StatelessWidget {
@@ -12,7 +12,7 @@ class AnimatedBgImageBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final homeController = Get.find<HomeController>();
-    final bgAnimationController = Get.put(HomeAnimationController());
+    final bgAnimationController = Get.find<BgAnimationController>();
 
     return AnimatedBuilder(
       animation: bgAnimationController.animation,

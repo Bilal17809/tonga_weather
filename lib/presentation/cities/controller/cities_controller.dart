@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tonga_weather/core/global/global_services/connectivity_service.dart';
+import '../../../ads_manager/banner_ads.dart';
+import '../../../ads_manager/interstitial_ads.dart';
 import '../../../core/global/global_controllers/condition_controller.dart';
 import '../../../data/model/city_model.dart';
 import '../../splash/controller/splash_controller.dart';
@@ -18,6 +20,8 @@ class CitiesController extends GetxController with ConnectivityMixin {
   @override
   Future<void> onInit() async {
     super.onInit();
+    Get.find<InterstitialAdController>().checkAndShowAd();
+    Get.find<BannerAdController>().loadBannerAd('ad3');
     while (!splashController.isAppReady) {
       await Future.delayed(const Duration(milliseconds: 50));
     }

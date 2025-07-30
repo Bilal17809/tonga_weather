@@ -4,9 +4,11 @@ import 'package:get/get.dart';
 import 'package:panara_dialogs/panara_dialogs.dart';
 import 'package:tonga_weather/core/theme/app_theme.dart';
 import 'package:tonga_weather/presentation/home/controller/home_controller.dart';
-import 'package:tonga_weather/presentation/home/view/widgets/animated_bg_builder.dart';
+import 'package:tonga_weather/animation/view/animated_bg_builder.dart';
 import 'package:tonga_weather/presentation/home/view/widgets/weather_body.dart';
 import 'package:tonga_weather/presentation/home/view/widgets/weather_header.dart';
+import '../../../ads_manager/banner_ads.dart';
+import '../../../ads_manager/interstitial_ads.dart';
 import '../../../core/common_widgets/custom_drawer.dart';
 import '../../../core/global/global_keys/global_key.dart';
 
@@ -36,6 +38,18 @@ class HomeView extends StatelessWidget {
             Column(children: const [WeatherHeader(), WeatherBody()]),
           ],
         ),
+        bottomNavigationBar: Obx(() {
+          final interstitialReady =
+              Get.find<InterstitialAdController>().isAdReady;
+          final bannerAdController = Get.find<BannerAdController>();
+          final isDrawerOpen = homeController.isDrawerOpen.value;
+
+          if (!interstitialReady && !isDrawerOpen) {
+            return bannerAdController.getBannerAdWidget('ad1');
+          } else {
+            return const SizedBox();
+          }
+        }),
       ),
     );
   }

@@ -31,17 +31,20 @@ class CityCard extends StatelessWidget {
 
       return GestureDetector(
         onTap: () async {
+          FocusScope.of(context).unfocus();
           await controller.selectCity(city);
           if (controller.splashController.selectedCity.value?.latLonKey ==
               city.latLonKey) {
-            Get.back(result: city);
+            Future.delayed(const Duration(milliseconds: 160), () {
+              Get.back(result: city);
+            });
           }
         },
-
         child: Container(
           margin: const EdgeInsets.only(bottom: kElementGap),
           decoration: roundedStylizedDecor(context).copyWith(
             gradient: kContainerGradient(context),
+            color: secondaryColorLight.withValues(alpha: 0.35),
             border: isCurrentlySelectedCity
                 ? Border.all(color: getSecondaryColor(context), width: 2)
                 : null,

@@ -25,9 +25,12 @@ class CurrentLocationCard extends StatelessWidget {
 
       return GestureDetector(
         onTap: () async {
+          FocusScope.of(context).unfocus();
           if (currentCity != null) {
             await controller.selectCity(currentCity);
-            Get.back(result: currentCity);
+            Future.delayed(const Duration(milliseconds: 160), () {
+              Get.back(result: currentCity);
+            });
           } else {
             SimpleToast.showCustomToast(
               context: context,
