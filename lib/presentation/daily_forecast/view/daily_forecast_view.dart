@@ -26,7 +26,6 @@ class DailyForecastView extends StatelessWidget {
         () => Stack(
           clipBehavior: Clip.none,
           children: [
-            IconActionButton(icon: icon, color: color),
             AnimatedBgImageBuilder(),
             Container(
               height: mobileHeight(context) * 0.5,
@@ -34,7 +33,6 @@ class DailyForecastView extends StatelessWidget {
               child: SafeArea(
                 child: Column(
                   children: [
-
                     CustomAppBar(
                       subtitle: '',
                       actions: [

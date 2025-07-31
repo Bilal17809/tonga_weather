@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// ========== Theme Related ==========
-// bool isDarkMode(BuildContext context) {
-//   return Theme.of(context).brightness == Brightness.dark;
-// }
-
 const fontPrimary = 'Montserrat';
 const fontSecondary = 'Poppins';
 

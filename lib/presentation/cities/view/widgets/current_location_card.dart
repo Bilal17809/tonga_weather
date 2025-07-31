@@ -3,10 +3,11 @@ import 'package:get/get.dart';
 import 'package:toastification/toastification.dart';
 import 'package:tonga_weather/core/common_widgets/custom_toast.dart';
 import 'package:tonga_weather/core/theme/app_theme.dart';
-import '../../../../core/common/app_exceptions.dart';
-import '../../../../core/constants/constant.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_styles.dart';
+import '/core/common/app_exceptions.dart';
+import '/core/constants/constant.dart';
+import '/core/theme/app_colors.dart';
+import '/core/theme/app_styles.dart';
+import '/core/theme/context.dart';
 import '../../../home/controller/home_controller.dart';
 import '../../controller/cities_controller.dart';
 

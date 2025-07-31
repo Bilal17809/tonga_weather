@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import '../theme/app_styles.dart';
 import '../theme/app_theme.dart';
 import 'icon_buttons.dart';
@@ -27,7 +26,7 @@ class CustomAppBar extends StatelessWidget {
 
     return SafeArea(
       child: Padding(
-        padding: kContentPaddingSmall,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

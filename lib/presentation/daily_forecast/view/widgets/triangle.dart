@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tonga_weather/core/constants/constant.dart';
-
-import '../../../../core/theme/app_colors.dart';
+import '/core/theme/app_colors.dart';
+import '/core/theme/context.dart';
 
 class TrianglePainter extends CustomPainter {
   final BuildContext context;

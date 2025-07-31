@@ -78,7 +78,7 @@ class _TemperatureSection extends StatelessWidget {
       final temp = weather?.temperature.round().toString() ?? '--';
 
       return Padding(
-        padding: kContentPadding,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.center,

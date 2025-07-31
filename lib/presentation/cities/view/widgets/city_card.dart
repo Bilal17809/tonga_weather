@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tonga_weather/core/theme/app_theme.dart';
 import '../../../../core/constants/constant.dart';
+import '../../../../core/global/global_services/lat_lon_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_styles.dart';
 import '../../../home/controller/home_controller.dart';
@@ -33,8 +34,11 @@ class CityCard extends StatelessWidget {
         onTap: () async {
           FocusScope.of(context).unfocus();
           await controller.selectCity(city);
-          if (controller.splashController.selectedCity.value?.latLonKey ==
-              city.latLonKey) {
+          if (controller.splashController.selectedCity.value != null &&
+              LocationUtilsService.fromCityModel(
+                    controller.splashController.selectedCity.value!,
+                  ) ==
+                  LocationUtilsService.fromCityModel(city)) {
             Future.delayed(const Duration(milliseconds: 160), () {
               Get.back(result: city);
             });

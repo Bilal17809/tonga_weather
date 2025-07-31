@@ -8,6 +8,7 @@ import 'package:tonga_weather/data/model/city_model.dart';
 import '../../../ads_manager/banner_ads.dart';
 import '../../../ads_manager/interstitial_ads.dart';
 import '../../../core/constants/constant.dart';
+import '../../../core/global/global_services/lat_lon_service.dart';
 import '../../../core/global/global_services/load_weather_service.dart';
 import '../../splash/controller/splash_controller.dart';
 import '../../../domain/use_cases/user_case.dart';
@@ -51,7 +52,8 @@ class HomeController extends GetxController with ConnectivityMixin {
     _setupAutoScroll();
     ever(splashController.selectedCity, (CityModel? newCity) async {
       if (newCity != null &&
-          selectedCity.value?.latLonKey != newCity.latLonKey) {
+          LocationUtilsService.fromCityModel(selectedCity.value!) !=
+              LocationUtilsService.fromCityModel(newCity)) {
         selectedCities.value = [newCity];
         await _initializeSelectedCity(newCity);
         _performAutoScroll();

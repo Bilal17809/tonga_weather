@@ -8,6 +8,7 @@ import 'package:tonga_weather/core/global/global_services/load_cities_service.da
 import 'package:tonga_weather/core/global/global_services/load_weather_service.dart';
 import '../../../core/global/global_controllers/condition_controller.dart';
 import '../../../core/global/global_services/connectivity_service.dart';
+import '../../../core/global/global_services/lat_lon_service.dart';
 import '../../../core/local_storage/local_storage.dart';
 import '../../../domain/use_cases/user_case.dart';
 import '../../../data/model/city_model.dart';
@@ -125,7 +126,7 @@ class SplashController extends GetxController with ConnectivityMixin {
   CityModel? get chosenCity => selectedCity.value;
   bool get isFirstTime => isFirstLaunch.value;
   Map<String, dynamic> get rawWeatherData {
-    final key = selectedCity.value?.latLonKey ?? selectedCityName;
+    final key = LocationUtilsService.fromCityModel(selectedCity.value!);
     return _rawDataStorage[key] ?? {};
   }
 
@@ -134,7 +135,7 @@ class SplashController extends GetxController with ConnectivityMixin {
   }
 
   void _updateRawForecastDataForCurrentCity() {
-    final key = selectedCity.value?.latLonKey ?? selectedCityName;
+    final key = LocationUtilsService.fromCityModel(selectedCity.value!);
     if (_rawDataStorage.containsKey(key)) {
       rawForecastData.value = Map<String, dynamic>.from(_rawDataStorage[key]!);
     }

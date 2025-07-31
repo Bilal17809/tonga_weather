@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tonga_weather/core/utils/dialog_utils.dart';
 import '../../common/app_exceptions.dart';
-
 
 class ConnectivityService extends GetxService {
   static ConnectivityService get instance => Get.find<ConnectivityService>();
@@ -50,21 +50,15 @@ class ConnectivityService extends GetxService {
     }
   }
 
-  void _startListeningToConnectivityChanges() async{
-    final result = await InternetAddress.lookup(
-      'google.com',
-    ).timeout(const Duration(seconds: 3));
+  void _startListeningToConnectivityChanges() async {
     _connectivitySubscription = _connectivity.onConnectivityChanged.listen(
       (List<ConnectivityResult> results) async {
         final result = results.first;
         debugPrint('[ConnectivityService] Connectivity changed: $result');
 
         if (result == ConnectivityResult.none) {
-          final hasInternet = result == null && result[0].rawAddress.isNotEmpty;
           _isConnected.value = false;
           _internetStatusController.add(false);
-          _isConnected.value = hasInternet;
-          _internetStatusController.add(hasInternet);
         } else {
           await _checkRealInternetConnectivity();
         }
@@ -81,7 +75,7 @@ class ConnectivityService extends GetxService {
     try {
       final result = await InternetAddress.lookup(
         'google.com',
-      ).timeout(const Duration(seconds: 3));
+      ).timeout(const Duration(seconds: 5));
       final hasInternet = result.isNotEmpty && result[0].rawAddress.isNotEmpty;
 
       if (_isConnected.value != hasInternet) {
@@ -97,29 +91,6 @@ class ConnectivityService extends GetxService {
         _isConnected.value = false;
         _internetStatusController.add(false);
       }
-    }
-  }
-
-  Future<bool> checkInternetNow() async {
-    try {
-      final connectivityResult = await _connectivity.checkConnectivity();
-      if (connectivityResult.first == ConnectivityResult.none) {
-        return false;
-      }
-
-      final result = await InternetAddress.lookup(
-        'google.com',
-      ).timeout(const Duration(seconds: 5));
-      final hasInternet = result.isNotEmpty && result[0].rawAddress.isNotEmpty;
-
-      _isConnected.value = hasInternet;
-      _internetStatusController.add(hasInternet);
-      return hasInternet;
-    } catch (e) {
-      debugPrint('[ConnectivityService] checkInternetNow failed: $e');
-      _isConnected.value = false;
-      _internetStatusController.add(false);
-      return false;
     }
   }
 
@@ -184,29 +155,38 @@ class ConnectivityService extends GetxService {
   //   );
   // }
 
-  // Future<bool> checkInternetWithDialog(
-  //   BuildContext context, {
-  //   required Future<void> Function() onRetry,
-  // }) async {
-  //   try {
-  //     final hasInternet = await InternetAddress.lookup('google.com')
-  //         .timeout(const Duration(seconds: 5))
-  //         .then(
-  //           (result) => result.isNotEmpty && result[0].rawAddress.isNotEmpty,
-  //         )
-  //         .catchError((e) => false);
-  //
-  //     if (!hasInternet) {
-  //       await showNoInternetDialog(Get.context!, onRetry: onRetry);
-  //       return false;
-  //     }
-  //     return true;
-  //   } catch (e) {
-  //     debugPrint('[ConnectivityService] checkInternetWithDialog failed: $e');
-  //     await showNoInternetDialog(Get.context!, onRetry: onRetry);
-  //     return false;
-  //   }
-  // }
+  Future<bool> checkInternetWithDialog(
+    BuildContext context, {
+    required Future<void> Function() onRetry,
+  }) async {
+    try {
+      final hasInternet = await InternetAddress.lookup('google.com')
+          .timeout(const Duration(seconds: 5))
+          .then(
+            (result) => result.isNotEmpty && result[0].rawAddress.isNotEmpty,
+          )
+          .catchError((e) => false);
+
+      if (!hasInternet) {
+        await DialogUtils.showNoInternetDialog(
+          Get.context!,
+          isConnected: _isConnected.value,
+          onRetry: onRetry,
+        );
+
+        return false;
+      }
+      return true;
+    } catch (e) {
+      debugPrint('[ConnectivityService] checkInternetWithDialog failed: $e');
+      await DialogUtils.showNoInternetDialog(
+        Get.context!,
+        isConnected: _isConnected.value,
+        onRetry: onRetry,
+      );
+      return false;
+    }
+  }
 }
 
 mixin ConnectivityMixin on GetxController {
@@ -250,15 +230,14 @@ mixin ConnectivityMixin on GetxController {
 
   Future<bool> ensureInternetConnection({
     required Future<void> Function() action,
-    BuildContext? context,
+    required BuildContext context,
   }) async {
     if (!connectivityService.isConnected) {
-      if (context != null) {
-        await connectivityService.showNoInternetDialog(
-          context,
-          onRetry: action,
-        );
-      }
+      await DialogUtils.showNoInternetDialog(
+        context,
+        isConnected: connectivityService.isConnected,
+        onRetry: action,
+      );
       return false;
     }
 
