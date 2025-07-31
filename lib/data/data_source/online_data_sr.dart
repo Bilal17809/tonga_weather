@@ -8,7 +8,7 @@ import '../model/weather_model.dart';
 import '../model/forecast_model.dart';
 
 class OnlineDataSource {
-  static const baseUrl = EnvironmentConfig;
+  // static const baseUrl = EnvironmentConfig;
   final String apiKey;
   OnlineDataSource(this.apiKey);
   Future<(WeatherModel, List<ForecastModel>)> getWeatherAndForecast({
@@ -17,7 +17,7 @@ class OnlineDataSource {
     int days = 7,
   }) async {
     final uri = Uri.parse(
-      '$baseUrl?key=$apiKey&q=$lat,$lon&days=$days&aqi=yes&alerts=no',
+      '${EnvironmentConfig.baseUrl}?key=$apiKey&q=$lat,$lon&days=$days&aqi=yes&alerts=no',
     );
     final response = await http.get(uri);
     if (response.statusCode == 200) {
@@ -41,7 +41,9 @@ class OnlineDataSource {
 
   /// For Current Location
   Future<String> getCity(double lat, double lon) async {
-    final uri = Uri.parse('$baseUrl?key=$apiKey&q=$lat,$lon');
+    final uri = Uri.parse(
+      '${EnvironmentConfig.baseUrl}?key=$apiKey&q=$lat,$lon',
+    );
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
