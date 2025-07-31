@@ -3,11 +3,12 @@ import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:tonga_weather/presentation/splash/controller/splash_controller.dart';
 import '../../core/common/app_exceptions.dart';
+import '../../core/config/enviroment.dart';
 import '../model/weather_model.dart';
 import '../model/forecast_model.dart';
 
 class OnlineDataSource {
-  static const baseUrl = "https://api.weatherapi.com/v1/forecast.json";
+  static const baseUrl = EnvironmentConfig;
   final String apiKey;
   OnlineDataSource(this.apiKey);
   Future<(WeatherModel, List<ForecastModel>)> getWeatherAndForecast({
@@ -25,7 +26,7 @@ class OnlineDataSource {
       final latLonKey = '${lat.toStringAsFixed(4)},${lon.toStringAsFixed(4)}';
       splashController.cacheCityData(latLonKey, data);
       splashController.rawForecastData.value = data;
-      final current = WeatherModel.fromForecastJson(data);
+      final current = WeatherModel.fromJson(data);
       final forecastDays = data['forecast']['forecastday'] as List;
       final forecast = forecastDays
           .map((e) => ForecastModel.fromJson(e))

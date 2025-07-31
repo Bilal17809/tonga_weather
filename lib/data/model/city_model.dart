@@ -36,6 +36,6 @@ class CityModel {
     };
   }
 
-  String get latLonKey =>
-      '${latitude.toStringAsFixed(4)},${longitude.toStringAsFixed(4)}';
+  // String get latLonKey =>
+  //     '${latitude.toStringAsFixed(4)},${longitude.toStringAsFixed(4)}';
 }

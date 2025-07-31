@@ -6,7 +6,5 @@ abstract class WeatherRepo {
     double lat,
     double lon,
   );
-
-  /// For Current Location
   Future<String> getCity(double lat, double lon);
 }

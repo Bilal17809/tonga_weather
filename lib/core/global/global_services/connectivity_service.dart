@@ -3,10 +3,8 @@ import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../common/app_exceptions.dart';
-import '../../constants/constant.dart';
-import '../../theme/app_colors.dart';
+
 
 class ConnectivityService extends GetxService {
   static ConnectivityService get instance => Get.find<ConnectivityService>();
@@ -52,15 +50,21 @@ class ConnectivityService extends GetxService {
     }
   }
 
-  void _startListeningToConnectivityChanges() {
+  void _startListeningToConnectivityChanges() async{
+    final result = await InternetAddress.lookup(
+      'google.com',
+    ).timeout(const Duration(seconds: 3));
     _connectivitySubscription = _connectivity.onConnectivityChanged.listen(
       (List<ConnectivityResult> results) async {
         final result = results.first;
         debugPrint('[ConnectivityService] Connectivity changed: $result');
 
         if (result == ConnectivityResult.none) {
+          final hasInternet = result == null && result[0].rawAddress.isNotEmpty;
           _isConnected.value = false;
           _internetStatusController.add(false);
+          _isConnected.value = hasInternet;
+          _internetStatusController.add(hasInternet);
         } else {
           await _checkRealInternetConnectivity();
         }
@@ -119,88 +123,90 @@ class ConnectivityService extends GetxService {
     }
   }
 
-  Future<void> showNoInternetDialog(
-    BuildContext context, {
-    required Future<void> Function() onRetry,
-  }) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("No Internet"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                "Please check your internet connection and try again.",
-              ),
-              const SizedBox(height: kBodyHp),
-              Obx(
-                () => Row(
-                  children: [
-                    Icon(
-                      _isConnected.value ? Icons.wifi : Icons.wifi_off,
-                      color: _isConnected.value ? kGreen : kRed,
-                    ),
-                    const SizedBox(width: kElementWidthGap),
-                    Text(
-                      _isConnected.value ? "Connected" : "Disconnected",
-                      style: TextStyle(
-                        color: _isConnected.value ? kGreen : kRed,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text("Cancel"),
-            ),
-            Obx(
-              () => ElevatedButton(
-                onPressed: _isConnected.value
-                    ? () async {
-                        Navigator.of(context).pop();
-                        await onRetry();
-                      }
-                    : null,
-                child: const Text("Retry"),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // utile......
 
-  Future<bool> checkInternetWithDialog(
-    BuildContext context, {
-    required Future<void> Function() onRetry,
-  }) async {
-    try {
-      final hasInternet = await InternetAddress.lookup('google.com')
-          .timeout(const Duration(seconds: 5))
-          .then(
-            (result) => result.isNotEmpty && result[0].rawAddress.isNotEmpty,
-          )
-          .catchError((e) => false);
+  // Future<void> showNoInternetDialog(
+  //   BuildContext context, {
+  //   required Future<void> Function() onRetry,
+  // }) async {
+  //   return showDialog<void>(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: const Text("No Internet"),
+  //         content: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             const Text(
+  //               "Please check your internet connection and try again.",
+  //             ),
+  //             const SizedBox(height: kBodyHp),
+  //             Obx(
+  //               () => Row(
+  //                 children: [
+  //                   Icon(
+  //                     _isConnected.value ? Icons.wifi : Icons.wifi_off,
+  //                     color: _isConnected.value ? kGreen : kRed,
+  //                   ),
+  //                   const SizedBox(width: kElementWidthGap),
+  //                   Text(
+  //                     _isConnected.value ? "Connected" : "Disconnected",
+  //                     style: TextStyle(
+  //                       color: _isConnected.value ? kGreen : kRed,
+  //                       fontWeight: FontWeight.bold,
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () => Navigator.of(context).pop(),
+  //             child: const Text("Cancel"),
+  //           ),
+  //           Obx(
+  //             () => ElevatedButton(
+  //               onPressed: _isConnected.value
+  //                   ? () async {
+  //                       Navigator.of(context).pop();
+  //                       await onRetry();
+  //                     }
+  //                   : null,
+  //               child: const Text("Retry"),
+  //             ),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
-      if (!hasInternet) {
-        await showNoInternetDialog(Get.context!, onRetry: onRetry);
-        return false;
-      }
-      return true;
-    } catch (e) {
-      debugPrint('[ConnectivityService] checkInternetWithDialog failed: $e');
-      await showNoInternetDialog(Get.context!, onRetry: onRetry);
-      return false;
-    }
-  }
+  // Future<bool> checkInternetWithDialog(
+  //   BuildContext context, {
+  //   required Future<void> Function() onRetry,
+  // }) async {
+  //   try {
+  //     final hasInternet = await InternetAddress.lookup('google.com')
+  //         .timeout(const Duration(seconds: 5))
+  //         .then(
+  //           (result) => result.isNotEmpty && result[0].rawAddress.isNotEmpty,
+  //         )
+  //         .catchError((e) => false);
+  //
+  //     if (!hasInternet) {
+  //       await showNoInternetDialog(Get.context!, onRetry: onRetry);
+  //       return false;
+  //     }
+  //     return true;
+  //   } catch (e) {
+  //     debugPrint('[ConnectivityService] checkInternetWithDialog failed: $e');
+  //     await showNoInternetDialog(Get.context!, onRetry: onRetry);
+  //     return false;
+  //   }
+  // }
 }
 
 mixin ConnectivityMixin on GetxController {

@@ -19,8 +19,6 @@ class GetWeatherAndForecast {
   }) {
     return weatherRepo.getWeatherAndForecast(lat, lon);
   }
-
-  /// For Current Location
   Future<String> getCity() async {
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
@@ -47,12 +45,9 @@ class GetWeatherAndForecast {
           onTimeout: () => throw Exception(AppExceptions().timeoutException),
         );
 
-    await savePosition(position);
+      await storage.setString('latitude', position.latitude.toString());
+      await storage.setString('longitude', position.longitude.toString());
     return weatherRepo.getCity(position.latitude, position.longitude);
   }
 
-  Future<void> savePosition(Position position) async {
-    await storage.setString('latitude', position.latitude.toString());
-    await storage.setString('longitude', position.longitude.toString());
-  }
 }

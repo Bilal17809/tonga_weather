@@ -9,7 +9,7 @@ import 'package:tonga_weather/presentation/home/view/widgets/weather_body.dart';
 import 'package:tonga_weather/presentation/home/view/widgets/weather_header.dart';
 import '../../../ads_manager/banner_ads.dart';
 import '../../../ads_manager/interstitial_ads.dart';
-import '../../../core/common_widgets/custom_drawer.dart';
+import '../../../core/common_widgets/app_drawer.dart';
 import '../../../core/global/global_keys/global_key.dart';
 
 class HomeView extends StatelessWidget {

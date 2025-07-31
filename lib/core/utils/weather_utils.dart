@@ -2,7 +2,7 @@ class WeatherUtils {
   static const String _defaultIconUrl =
       'https://cdn.weatherapi.com/weather/128x128/day/116.png';
 
-  static final Map<String, String> _weatherIcon = {
+  static final Map<String, dynamic> _weatherIcon = {
     'clear': 'images/clear.png',
     'cloudy': 'images/cloudy.png',
     'rain': 'images/rain.png',
@@ -74,13 +74,10 @@ class WeatherUtils {
     }
     return 'clear';
   }
-
   static String getDefaultIcon() => _defaultIconUrl;
-
   static String getWeatherIconPath(String weatherType) {
     return _weatherIcon[weatherType.toLowerCase()] ?? _weatherIcon['clear']!;
   }
-
   static String getWeatherBgPath(String weatherType) {
     return _weatherBg[weatherType.toLowerCase()] ?? _weatherBg['clear']!;
   }

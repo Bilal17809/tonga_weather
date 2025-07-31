@@ -10,7 +10,7 @@ import '../../../ads_manager/interstitial_ads.dart';
 import '../../../core/constants/constant.dart';
 import '../../../core/global/global_services/load_weather_service.dart';
 import '../../splash/controller/splash_controller.dart';
-import '../../../domain/use_cases/get_current_weather.dart';
+import '../../../domain/use_cases/user_case.dart';
 
 class HomeController extends GetxController with ConnectivityMixin {
   final GetWeatherAndForecast getCurrentWeather;

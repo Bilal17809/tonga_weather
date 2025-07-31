@@ -9,14 +9,9 @@ class ConditionController extends GetxController {
   final selectedCitiesWeather = <WeatherModel>[].obs;
   final allCitiesWeather = <String, WeatherModel>{}.obs;
   final weeklyForecast = <Map<String, dynamic>>[].obs;
+  // final rawForecastData = <String, dynamic>{}.obs;
   final mainCityName = ''.obs;
-  final rawForecastData = <String, dynamic>{}.obs;
-  String get minTemp => _getTodayForecastValue('minTemp');
-  String get maxTemp => _getTodayForecastValue('temp');
-  String get chanceOfRain => '${mainCityWeather.value?.chanceOfRain ?? '--'}%';
-  String get humidity => '${mainCityWeather.value?.humidity ?? '--'}%';
-  String get windSpeed =>
-      '${mainCityWeather.value?.windSpeed.toStringAsFixed(1) ?? '--'}km/h';
+
 
   void updateWeatherData(
     List<WeatherModel> weatherList,
@@ -69,4 +64,11 @@ class ConditionController extends GetxController {
         ? 'Today'
         : DateTimeUtils.getWeekday(date);
   }
+
+  String get minTemp => _getTodayForecastValue('minTemp');
+  String get maxTemp => _getTodayForecastValue('temp');
+  String get chanceOfRain => '${mainCityWeather.value?.chanceOfRain ?? '--'}%';
+  String get humidity => '${mainCityWeather.value?.humidity ?? '--'}%';
+  String get windSpeed =>
+      '${mainCityWeather.value?.windSpeed.toStringAsFixed(1) ?? '--'}km/h';
 }

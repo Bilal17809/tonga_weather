@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../data/model/city_model.dart';
-import '../../../domain/use_cases/get_current_weather.dart';
+import '../../../domain/use_cases/user_case.dart';
 import '../../common/app_exceptions.dart';
 import '../../local_storage/local_storage.dart';
 

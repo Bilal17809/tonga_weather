@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 /// ========== Theme Related ==========
-bool isDarkMode(BuildContext context) {
-  return Theme.of(context).brightness == Brightness.dark;
-}
+// bool isDarkMode(BuildContext context) {
+//   return Theme.of(context).brightness == Brightness.dark;
+// }
 
 const fontPrimary = 'Montserrat';
 const fontSecondary = 'Poppins';
@@ -13,8 +13,8 @@ const double kBodyHp = 16.0;
 const double kElementGap = 12.0;
 const double kElementInnerGap = 8.0;
 const double kElementWidthGap = 10.0;
-const kContentPaddingSmall = EdgeInsets.symmetric(horizontal: 12, vertical: 4);
-const kContentPadding = EdgeInsets.symmetric(horizontal: 16, vertical: 4);
+// const kContentPaddingSmall = EdgeInsets.symmetric(horizontal: 12, vertical: 4);
+// const kContentPadding = EdgeInsets.symmetric(horizontal: 16, vertical: 4);
 
 /// ========== Margins ==========
 const kPaginationMargin = EdgeInsets.symmetric(horizontal: 3);

@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tonga_weather/core/utils/date_time_util.dart';
 import 'package:tonga_weather/presentation/daily_forecast/view/widgets/triangle.dart';
-import '../../../ads_manager/banner_ads.dart';
-import '../../../ads_manager/interstitial_ads.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../animation/view/animated_bg_builder.dart';
+import '../../../core/animation/view/animated_bg_builder.dart';
+import '../../../core/common_widgets/icon_buttons.dart';
+import '/ads_manager/banner_ads.dart';
+import '/ads_manager/interstitial_ads.dart';
+import '/core/theme/app_colors.dart';
 import '../controller/daily_forecast_controller.dart';
 import '../../../core/common_widgets/custom_appbar.dart';
-import '../../../core/common_widgets/icon_buttons.dart';
 import '../../../core/constants/constant.dart';
 import '../../../core/theme/app_styles.dart';
 import '../../../core/theme/app_theme.dart';
@@ -26,6 +26,7 @@ class DailyForecastView extends StatelessWidget {
         () => Stack(
           clipBehavior: Clip.none,
           children: [
+            IconActionButton(icon: icon, color: color),
             AnimatedBgImageBuilder(),
             Container(
               height: mobileHeight(context) * 0.5,
@@ -33,6 +34,7 @@ class DailyForecastView extends StatelessWidget {
               child: SafeArea(
                 child: Column(
                   children: [
+
                     CustomAppBar(
                       subtitle: '',
                       actions: [

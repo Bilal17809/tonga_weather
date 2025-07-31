@@ -3,12 +3,12 @@ import 'package:get/get.dart';
 import 'package:tonga_weather/core/theme/app_theme.dart';
 import 'package:tonga_weather/presentation/cities/view/widgets/city_card.dart';
 import 'package:tonga_weather/presentation/cities/view/widgets/current_location_card.dart';
-import 'package:tonga_weather/animation/view/animated_bg_builder.dart';
-import '../../../ads_manager/banner_ads.dart';
-import '../../../ads_manager/interstitial_ads.dart';
-import '../../../core/common_widgets/custom_appbar.dart';
-import '../../../core/common_widgets/search_bar.dart';
-import '../../../core/constants/constant.dart';
+import '../../../core/animation/view/animated_bg_builder.dart';
+import '/ads_manager/banner_ads.dart';
+import '/ads_manager/interstitial_ads.dart';
+import '/core/common_widgets/custom_appbar.dart';
+import '/core/common_widgets/search_bar.dart';
+import '/core/constants/constant.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_styles.dart';
 import '../controller/cities_controller.dart';
@@ -118,11 +118,7 @@ class CitiesView extends StatelessWidget {
         bottomNavigationBar: Get.find<InterstitialAdController>().isAdReady
             ? SizedBox()
             : Obx(() {
-                final banner = Get.find<BannerAdController>();
-                debugPrint(
-                  '####UI ---- isAdEnabled=${banner.isAdEnabled.value}',
-                );
-                return banner.getBannerAdWidget('ad3');
+                return Get.find<BannerAdController>().getBannerAdWidget('ad3');
               }),
       ),
     );

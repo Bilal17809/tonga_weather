@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:tonga_weather/animation/controller/animation_controller.dart';
 import 'package:tonga_weather/core/global/global_services/load_cities_service.dart';
 import '../../ads_manager/banner_ads.dart';
 import '../../ads_manager/interstitial_ads.dart';
@@ -7,10 +6,11 @@ import '../../ads_manager/splash_interstitial.dart';
 import '../../data/data_source/online_data_sr.dart';
 import '../../data/repo/weather_api_impl.dart';
 import '../../domain/repositories/weather_repo.dart';
-import '../../domain/use_cases/get_current_weather.dart';
+import '../../domain/use_cases/user_case.dart';
 import '../../presentation/cities/controller/cities_controller.dart';
 import '../../presentation/home/controller/home_controller.dart';
 import '../../presentation/splash/controller/splash_controller.dart';
+import '../animation/controller/animation_controller.dart';
 import '../global/global_controllers/condition_controller.dart';
 import '../global/global_services/city_storage_service.dart';
 import '../global/global_services/connectivity_service.dart';

@@ -36,10 +36,10 @@ class CustomAppBar extends StatelessWidget {
                     isCircular: true,
                     backgroundColor: getSecondaryColor(context),
                     onTap: () {
-                      FocusScope.of(context).unfocus();
-                      Future.delayed(const Duration(milliseconds: 150), () {
-                        Get.back();
-                      });
+                      // FocusScope.of(context).unfocus();
+                      // Future.delayed(const Duration(milliseconds: 150), () {
+                      //   Get.back();
+                      // });
                     },
                     icon: Icons.arrow_back,
                     color: getIconColor(context),

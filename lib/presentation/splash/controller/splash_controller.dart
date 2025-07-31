@@ -9,7 +9,7 @@ import 'package:tonga_weather/core/global/global_services/load_weather_service.d
 import '../../../core/global/global_controllers/condition_controller.dart';
 import '../../../core/global/global_services/connectivity_service.dart';
 import '../../../core/local_storage/local_storage.dart';
-import '../../../domain/use_cases/get_current_weather.dart';
+import '../../../domain/use_cases/user_case.dart';
 import '../../../data/model/city_model.dart';
 import '../../home/controller/home_controller.dart';
 

@@ -8,20 +8,19 @@ import '../../../data/model/city_model.dart';
 import '../../splash/controller/splash_controller.dart';
 
 class CitiesController extends GetxController with ConnectivityMixin {
-  final TextEditingController searchController = TextEditingController();
   var hasSearchError = false.obs;
   var searchErrorMessage = ''.obs;
-  var filteredCities = <CityModel>[].obs;
   var isSearching = false.obs;
-  SplashController get splashController => Get.find<SplashController>();
-  ConditionController get conditionController =>
-      Get.find<ConditionController>();
+
+  var filteredCities = <CityModel>[].obs;
+  final TextEditingController searchController = TextEditingController();
 
   @override
   Future<void> onInit() async {
     super.onInit();
     Get.find<InterstitialAdController>().checkAndShowAd();
     Get.find<BannerAdController>().loadBannerAd('ad3');
+
     while (!splashController.isAppReady) {
       await Future.delayed(const Duration(milliseconds: 50));
     }
@@ -73,6 +72,10 @@ class CitiesController extends GetxController with ConnectivityMixin {
       },
     );
   }
+
+  SplashController get splashController => Get.find<SplashController>();
+  ConditionController get conditionController =>
+      Get.find<ConditionController>();
 
   @override
   void onClose() {
