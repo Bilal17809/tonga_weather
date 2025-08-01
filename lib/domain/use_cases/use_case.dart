@@ -1,10 +1,9 @@
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
-
-import '../../core/common/app_exceptions.dart';
-import '../../core/local_storage/local_storage.dart';
-import '../../data/model/weather_model.dart';
-import '../../data/model/forecast_model.dart';
+import '/core/common/app_exceptions.dart';
+import '/core/local_storage/local_storage.dart';
+import '/data/model/weather_model.dart';
+import '/data/model/forecast_model.dart';
 import '../repositories/weather_repo.dart';
 
 class GetWeatherAndForecast {
@@ -19,6 +18,7 @@ class GetWeatherAndForecast {
   }) {
     return weatherRepo.getWeatherAndForecast(lat, lon);
   }
+
   Future<String> getCity() async {
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
@@ -45,9 +45,8 @@ class GetWeatherAndForecast {
           onTimeout: () => throw Exception(AppExceptions().timeoutException),
         );
 
-      await storage.setString('latitude', position.latitude.toString());
-      await storage.setString('longitude', position.longitude.toString());
+    await storage.setString('latitude', position.latitude.toString());
+    await storage.setString('longitude', position.longitude.toString());
     return weatherRepo.getCity(position.latitude, position.longitude);
   }
-
 }

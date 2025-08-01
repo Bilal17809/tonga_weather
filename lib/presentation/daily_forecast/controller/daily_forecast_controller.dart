@@ -1,24 +1,16 @@
 import 'package:get/get.dart';
-import '../../../ads_manager/banner_ads.dart';
-import '../../../ads_manager/interstitial_ads.dart';
-import '../../../core/global/global_services/connectivity_service.dart';
-import '../../../core/global/global_controllers/condition_controller.dart';
-import '../../home/controller/home_controller.dart';
+import '/core/mixins/connectivity_mixin.dart';
+import '/ads_manager/banner_ads.dart';
+import '/ads_manager/interstitial_ads.dart';
+import '/core/services/services.dart';
+import '/presentation/home/controller/home_controller.dart';
 
 class DailyForecastController extends GetxController with ConnectivityMixin {
   var forecastData = <Map<String, dynamic>>[].obs;
   final homeController = Get.find<HomeController>();
-  final conditionController = Get.find<ConditionController>();
+  final conditionController = Get.find<ConditionService>();
   var selectedDayIndex = 0.obs;
   var selectedCityName = ''.obs;
-
-  @override
-  void onInit() {
-    super.onInit();
-    Get.find<InterstitialAdController>().checkAndShowAd();
-    Get.find<BannerAdController>().loadBannerAd('ad2');
-    loadForecastData();
-  }
 
   @override
   void onReady() {
@@ -26,6 +18,8 @@ class DailyForecastController extends GetxController with ConnectivityMixin {
     initWithConnectivityCheck(
       context: Get.context!,
       onConnected: () async {
+        Get.find<InterstitialAdManager>().checkAndDisplayAd();
+        Get.find<BannerAdManager>().loadBannerAd('ad2');
         loadForecastData();
       },
     );

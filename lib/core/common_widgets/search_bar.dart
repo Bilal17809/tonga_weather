@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import '../constants/constant.dart';
-import '../theme/app_colors.dart';
-import '../theme/app_styles.dart';
-import 'common_text_field.dart';
+import '/core/theme/theme.dart';
+import 'input_field.dart';
 
 class SearchBarField extends StatelessWidget {
   final TextEditingController controller;
@@ -26,7 +25,7 @@ class SearchBarField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CommonTextField(
+    return InputField(
       controller: controller,
       hintText: 'Search',
       textStyle: bodyBoldMediumStyle(

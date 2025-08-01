@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../constants/constant.dart';
-import 'app_colors.dart';
-import 'app_theme.dart';
+import '/core/constants/constant.dart';
+import 'theme.dart';
 
 TextStyle headlineLargeStyle(BuildContext context) => TextStyle(
   fontSize: mobileHeight(context) * 0.14,

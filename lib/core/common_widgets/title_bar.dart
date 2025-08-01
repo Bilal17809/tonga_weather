@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import '../theme/app_styles.dart';
-import '../theme/app_theme.dart';
-import 'icon_buttons.dart';
+import 'package:get/get.dart';
+import '/core/theme/theme.dart';
+import 'buttons.dart';
 import '../constants/constant.dart';
 
-class CustomAppBar extends StatelessWidget {
+class TitleBar extends StatelessWidget {
   final List<Widget>? actions;
   final String? title;
   final String subtitle;
   final bool useBackButton;
   final VoidCallback? onBackTap;
 
-  const CustomAppBar({
+  const TitleBar({
     super.key,
     required this.subtitle,
     this.useBackButton = true,
@@ -35,10 +35,10 @@ class CustomAppBar extends StatelessWidget {
                     isCircular: true,
                     backgroundColor: getSecondaryColor(context),
                     onTap: () {
-                      // FocusScope.of(context).unfocus();
-                      // Future.delayed(const Duration(milliseconds: 150), () {
-                      //   Get.back();
-                      // });
+                      FocusScope.of(context).unfocus();
+                      Future.delayed(const Duration(milliseconds: 150), () {
+                        Get.back();
+                      });
                     },
                     icon: Icons.arrow_back,
                     color: getIconColor(context),

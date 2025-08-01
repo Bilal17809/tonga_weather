@@ -1,17 +1,15 @@
 import 'package:get/get.dart';
-import '../../../data/model/weather_model.dart';
-import '../../../data/model/forecast_model.dart';
-import '../../utils/date_time_util.dart';
-import '../global_services/android_widet_service.dart';
+import 'package:tonga_weather/core/platform_channel/android_widget_channel.dart';
+import '../../data/model/weather_model.dart';
+import '../../data/model/forecast_model.dart';
+import 'date_time_service.dart';
 
-class ConditionController extends GetxController {
+class ConditionService extends GetxController {
   final mainCityWeather = Rx<WeatherModel?>(null);
   final selectedCitiesWeather = <WeatherModel>[].obs;
   final allCitiesWeather = <String, WeatherModel>{}.obs;
   final weeklyForecast = <Map<String, dynamic>>[].obs;
-  // final rawForecastData = <String, dynamic>{}.obs;
   final mainCityName = ''.obs;
-
 
   void updateWeatherData(
     List<WeatherModel> weatherList,
@@ -60,9 +58,9 @@ class ConditionController extends GetxController {
 
   String _getDayLabel(String dateStr) {
     final date = DateTime.parse(dateStr);
-    return DateTimeUtils.isToday(date)
+    return DateTimeService.isToday(date)
         ? 'Today'
-        : DateTimeUtils.getWeekday(date);
+        : DateTimeService.getWeekday(date);
   }
 
   String get minTemp => _getTodayForecastValue('minTemp');

@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 
-class DateTimeUtils {
+class DateTimeService {
   static String getFormattedCurrentDate() {
     return DateFormat('EEE MMMM d').format(DateTime.now());
   }

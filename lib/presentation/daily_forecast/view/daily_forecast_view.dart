@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tonga_weather/core/utils/date_time_util.dart';
+import '../../../ads_manager/interstitial_ads.dart';
+import '/core/services/services.dart';
 import 'package:tonga_weather/presentation/daily_forecast/view/widgets/triangle.dart';
-import '../../../core/animation/view/animated_bg_builder.dart';
-import '../../../core/common_widgets/icon_buttons.dart';
+import '/core/animation/view/animated_bg_builder.dart';
 import '/ads_manager/banner_ads.dart';
-import '/ads_manager/interstitial_ads.dart';
-import '/core/theme/app_colors.dart';
+import '/core/theme/theme.dart';
 import '../controller/daily_forecast_controller.dart';
-import '../../../core/common_widgets/custom_appbar.dart';
-import '../../../core/constants/constant.dart';
-import '../../../core/theme/app_styles.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../cities/view/cities_view.dart';
+import 'package:tonga_weather/core/common_widgets/common_widgets.dart';
+import '/core/constants/constant.dart';
+import '/presentation/cities/view/cities_view.dart';
 
 class DailyForecastView extends StatelessWidget {
   const DailyForecastView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(DailyForecastController());
+    final controller = Get.find<DailyForecastController>();
 
     return Scaffold(
       body: Obx(
@@ -33,7 +30,7 @@ class DailyForecastView extends StatelessWidget {
               child: SafeArea(
                 child: Column(
                   children: [
-                    CustomAppBar(
+                    TitleBar(
                       subtitle: '',
                       actions: [
                         IconActionButton(
@@ -67,7 +64,7 @@ class DailyForecastView extends StatelessWidget {
                                 style: headlineSmallStyle(context),
                               ),
                               Text(
-                                DateTimeUtils.getFormattedCurrentDate(),
+                                DateTimeService.getFormattedCurrentDate(),
                                 style: bodyLargeStyle(context),
                               ),
                             ],
@@ -129,9 +126,11 @@ class DailyForecastView extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: Get.find<InterstitialAdController>().isAdReady
-          ? const SizedBox()
-          : Obx(() => Get.find<BannerAdController>().getBannerAdWidget('ad2')),
+      bottomNavigationBar: Obx(() {
+        return Get.find<InterstitialAdManager>().isShow.value
+            ? SizedBox()
+            : Get.find<BannerAdManager>().showBannerAd('ad2');
+      }),
     );
   }
 }

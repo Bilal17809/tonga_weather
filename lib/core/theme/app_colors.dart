@@ -13,7 +13,8 @@ const Color kBlack = Color(0xFF1C1C1C);
 const Color greyColor = Color(0xff626262);
 
 // Reds & Oranges
-const Color kOrange = Color(0xffFF7600);
+const Color kOrange = Color(0xFFF39512);
+const Color kDarkOrange = Color(0xFFA05E02);
 const Color kRed = Color(0xffe30000);
 
 // Green

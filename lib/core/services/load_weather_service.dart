@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:tonga_weather/core/common/app_exceptions.dart';
-import '../../../data/model/city_model.dart';
-import '../../../domain/use_cases/user_case.dart';
-import '../global_controllers/condition_controller.dart';
+import '../../data/model/city_model.dart';
+import '../../domain/use_cases/use_case.dart';
+import 'condition_service.dart';
 
 class LoadWeatherService {
   final GetWeatherAndForecast getCurrentWeather;
-  final ConditionController conditionController;
+  final ConditionService conditionController;
 
   LoadWeatherService({
     required this.getCurrentWeather,

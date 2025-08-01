@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 
-import '../../../data/model/city_model.dart';
+import '../../data/model/city_model.dart';
 
 class LoadCitiesService {
   Future<List<CityModel>> loadAllCities() async {

@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tonga_weather/core/global/global_services/load_weather_service.dart';
-import 'package:tonga_weather/core/utils/date_time_util.dart';
+import 'package:tonga_weather/core/animation/view/animated_weather_icon.dart';
 import 'package:tonga_weather/core/utils/weather_utils.dart';
 import 'package:tonga_weather/presentation/home/controller/home_controller.dart';
-import '../../../../core/common_widgets/custom_appbar.dart';
-import '../../../../core/common_widgets/icon_buttons.dart';
-import '../../../../core/constants/constant.dart';
-import '../../../../core/global/global_controllers/condition_controller.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_styles.dart';
-import '../../../../core/theme/app_theme.dart';
-import '../../../cities/view/cities_view.dart';
+import 'package:tonga_weather/core/common_widgets/common_widgets.dart';
+import '/core/constants/constant.dart';
+import '/core/services/services.dart';
+import '/core/theme/theme.dart';
+import '/presentation/cities/view/cities_view.dart';
 
 class WeatherHeader extends StatelessWidget {
   const WeatherHeader({super.key});
@@ -26,11 +22,11 @@ class WeatherHeader extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: [
-              CustomAppBar(
+              TitleBar(
                 useBackButton: false,
                 title:
                     homeController.selectedCity.value?.city ?? 'Unknown City',
-                subtitle: DateTimeUtils.getFormattedCurrentDate(),
+                subtitle: DateTimeService.getFormattedCurrentDate(),
                 actions: [
                   IconActionButton(
                     onTap: () async {
@@ -84,14 +80,14 @@ class _TemperatureSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Flexible(
-              child: Image.asset(
-                WeatherUtils.getWeatherIconPath(
-                  WeatherUtils.getWeatherIcon(weather?.code ?? 1000),
+              child: AnimatedWeatherIcon(
+                imagePath: WeatherUtils.getWeatherIconPath(
+                  WeatherUtils.getWeatherIcon(weather!.code),
                 ),
+                condition: weather.condition,
                 width: primaryIcon(context),
               ),
             ),
-
             const SizedBox(width: kElementGap),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,7 +108,7 @@ class _WeatherMetrics extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final conditionController = Get.find<ConditionController>();
+    final conditionController = Get.find<ConditionService>();
     return Obx(
       () => Padding(
         padding: EdgeInsets.symmetric(horizontal: mobileWidth(context) * 0.15),

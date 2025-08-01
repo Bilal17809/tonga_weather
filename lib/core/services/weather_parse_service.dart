@@ -1,4 +1,4 @@
-import 'package:tonga_weather/core/utils/date_time_util.dart';
+import 'date_time_service.dart';
 import '/data/model/aqi_model.dart';
 
 class WeatherParsingService {
@@ -7,7 +7,7 @@ class WeatherParsingService {
     DateTime currentTime,
   ) {
     for (var hour in hourlyData) {
-      final hourTime = DateTimeUtils.parseLocal(hour['time']);
+      final hourTime = DateTimeService.parseLocal(hour['time']);
       if (hourTime.hour == currentTime.hour &&
           hourTime.day == currentTime.day &&
           hourTime.month == currentTime.month &&

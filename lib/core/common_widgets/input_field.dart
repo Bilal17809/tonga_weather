@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import '../constants/constant.dart';
-import '../theme/app_colors.dart';
-import '../theme/app_styles.dart';
+import '/core/theme/theme.dart';
 
-class CommonTextField extends StatelessWidget {
+class InputField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final int minLines;
@@ -19,7 +18,7 @@ class CommonTextField extends StatelessWidget {
   final Color? cursorColor;
   final Color? backgroundColor;
 
-  const CommonTextField({
+  const InputField({
     super.key,
     required this.controller,
     this.hintText = 'Enter text...',

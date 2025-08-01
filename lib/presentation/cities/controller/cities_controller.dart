@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tonga_weather/core/global/global_services/connectivity_service.dart';
-import '../../../ads_manager/banner_ads.dart';
-import '../../../ads_manager/interstitial_ads.dart';
-import '../../../core/global/global_controllers/condition_controller.dart';
-import '../../../data/model/city_model.dart';
-import '../../splash/controller/splash_controller.dart';
+import '/core/mixins/connectivity_mixin.dart';
+import '/core/services/services.dart';
+import '/ads_manager/banner_ads.dart';
+import '/ads_manager/interstitial_ads.dart';
+import '/data/model/city_model.dart';
+import '/presentation/splash/controller/splash_controller.dart';
 
 class CitiesController extends GetxController with ConnectivityMixin {
+  final splashController = Get.find<SplashController>();
+  final conditionController = Get.find<ConditionService>();
   var hasSearchError = false.obs;
   var searchErrorMessage = ''.obs;
   var isSearching = false.obs;
@@ -16,11 +18,14 @@ class CitiesController extends GetxController with ConnectivityMixin {
   final TextEditingController searchController = TextEditingController();
 
   @override
-  Future<void> onInit() async {
-    super.onInit();
-    Get.find<InterstitialAdController>().checkAndShowAd();
-    Get.find<BannerAdController>().loadBannerAd('ad3');
+  void onReady() {
+    super.onReady();
+    Get.find<InterstitialAdManager>().checkAndDisplayAd();
+    Get.find<BannerAdManager>().loadBannerAd('ad3');
+    _syncSplash();
+  }
 
+  Future<void> _syncSplash() async {
     while (!splashController.isAppReady) {
       await Future.delayed(const Duration(milliseconds: 50));
     }
@@ -72,10 +77,6 @@ class CitiesController extends GetxController with ConnectivityMixin {
       },
     );
   }
-
-  SplashController get splashController => Get.find<SplashController>();
-  ConditionController get conditionController =>
-      Get.find<ConditionController>();
 
   @override
   void onClose() {

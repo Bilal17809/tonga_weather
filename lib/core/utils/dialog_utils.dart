@@ -1,51 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:tonga_weather/core/constants/constant.dart';
-import 'package:tonga_weather/core/theme/app_colors.dart';
+import 'package:get/get.dart';
+import '../services/services.dart';
+import '../constants/constant.dart';
+import '/core/theme/theme.dart';
 
-class DialogUtils {
+class DialogUtil {
   static Future<void> showNoInternetDialog(
     BuildContext context, {
-    required bool isConnected,
     required Future<void> Function() onRetry,
-  }) async {
-    return showDialog<void>(
+  }) {
+    final RxBool isConnected = ConnectivityService.instance.isConnectedRx;
+
+    return showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("No Internet"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                "Please check your internet connection and try again.",
-              ),
-              const SizedBox(height: kBodyHp),
-              Row(
+      builder: (_) => AlertDialog(
+        title: const Text("No Internet"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text("Please check your internet connection and try again."),
+            const SizedBox(height: kBodyHp),
+            Obx(
+              () => Row(
                 children: [
                   Icon(
-                    isConnected ? Icons.wifi : Icons.wifi_off,
-                    color: isConnected ? kGreen : kRed,
+                    isConnected.value ? Icons.wifi : Icons.wifi_off,
+                    color: isConnected.value ? kGreen : kRed,
                   ),
                   const SizedBox(width: kElementWidthGap),
                   Text(
-                    isConnected ? "Connected" : "Disconnected",
+                    isConnected.value ? "Connected" : "Disconnected",
                     style: TextStyle(
-                      color: isConnected ? kGreen : kRed,
+                      color: isConnected.value ? kGreen : kRed,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
               ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text("Cancel"),
             ),
-            ElevatedButton(
-              onPressed: isConnected
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("Cancel"),
+          ),
+          Obx(
+            () => ElevatedButton(
+              onPressed: isConnected.value
                   ? () async {
                       Navigator.of(context).pop();
                       await onRetry();
@@ -53,9 +56,9 @@ class DialogUtils {
                   : null,
               child: const Text("Retry"),
             ),
-          ],
-        );
-      },
+          ),
+        ],
+      ),
     );
   }
 }

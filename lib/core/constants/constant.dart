@@ -1,18 +1,10 @@
 import 'package:flutter/material.dart';
 
-const fontPrimary = 'Montserrat';
-const fontSecondary = 'Poppins';
-
 /// ========== Padding ==========
 const double kBodyHp = 16.0;
 const double kElementGap = 12.0;
 const double kElementInnerGap = 8.0;
 const double kElementWidthGap = 10.0;
-// const kContentPaddingSmall = EdgeInsets.symmetric(horizontal: 12, vertical: 4);
-// const kContentPadding = EdgeInsets.symmetric(horizontal: 16, vertical: 4);
-
-/// ========== Margins ==========
-const kPaginationMargin = EdgeInsets.symmetric(horizontal: 3);
 
 /// ========== Border ==========
 const double kBorderRadius = 8.0;

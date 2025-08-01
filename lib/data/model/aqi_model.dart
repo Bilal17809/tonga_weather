@@ -1,4 +1,4 @@
-import 'package:tonga_weather/core/global/global_services/aqi_service.dart';
+import '/core/services/services.dart';
 
 class AirQualityModel {
   final double co;

@@ -1,8 +1,8 @@
-import 'package:tonga_weather/core/utils/date_time_util.dart';
+import 'date_time_service.dart';
 
 Map<String, dynamic>? fetchCurrentHour(Map<String, dynamic> rawForecastData) {
   final now = DateTime.now();
-  final today = DateTimeUtils.getTodayDateKey();
+  final today = DateTimeService.getTodayDateKey();
   final forecastDays = rawForecastData['forecast']?['forecastday'];
   if (forecastDays == null) return null;
   Map<String, dynamic>? todayData;
@@ -17,7 +17,7 @@ Map<String, dynamic>? fetchCurrentHour(Map<String, dynamic> rawForecastData) {
   if (hourlyList == null) return null;
 
   for (var hour in hourlyList) {
-    final hourTime = DateTimeUtils.parseLocal(hour['time']);
+    final hourTime = DateTimeService.parseLocal(hour['time']);
     if (hourTime.hour == now.hour) {
       return hour;
     }

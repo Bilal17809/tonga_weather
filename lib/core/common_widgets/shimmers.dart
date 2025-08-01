@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-
-import '../theme/app_colors.dart';
+import '/core/theme/theme.dart';
 
 class ShimmerListView extends StatelessWidget {
   final int itemCount;

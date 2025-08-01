@@ -2,13 +2,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:tonga_weather/presentation/splash/controller/splash_controller.dart';
-import '../../core/common/app_exceptions.dart';
-import '../../core/config/enviroment.dart';
+import '/core/common/app_exceptions.dart';
+import '/core/config/environment.dart';
 import '../model/weather_model.dart';
 import '../model/forecast_model.dart';
 
 class OnlineDataSource {
-  // static const baseUrl = EnvironmentConfig;
   final String apiKey;
   OnlineDataSource(this.apiKey);
   Future<(WeatherModel, List<ForecastModel>)> getWeatherAndForecast({

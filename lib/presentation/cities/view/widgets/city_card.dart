@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tonga_weather/core/theme/app_theme.dart';
-import '../../../../core/constants/constant.dart';
-import '../../../../core/global/global_services/lat_lon_service.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_styles.dart';
-import '../../../home/controller/home_controller.dart';
+import '/core/theme/theme.dart';
+import '/core/constants/constant.dart';
+import '/core/services/services.dart';
+import '/presentation/home/controller/home_controller.dart';
 import '../../controller/cities_controller.dart';
-import '../../../../data/model/city_model.dart';
+import '/data/model/city_model.dart';
 
 class CityCard extends StatelessWidget {
   final CitiesController controller;
@@ -27,7 +25,7 @@ class CityCard extends StatelessWidget {
       final temp = weather?.temperature.round().toString() ?? '--';
       final condition = weather?.condition ?? 'Loading...';
       final airQuality = weather?.airQuality != null
-          ? 'AQI ${weather!.airQuality!.calculatedAqi}'
+          ? 'AQI ${weather!.airQuality!.calculatedAqi} - ${weather.airQuality!.category}'
           : 'Loading...';
 
       return GestureDetector(
@@ -47,8 +45,10 @@ class CityCard extends StatelessWidget {
         child: Container(
           margin: const EdgeInsets.only(bottom: kElementGap),
           decoration: roundedStylizedDecor(context).copyWith(
-            gradient: kContainerGradient(context),
-            color: secondaryColorLight.withValues(alpha: 0.35),
+            gradient: isDarkMode(context) ? null : kContainerGradient(context),
+            color: isDarkMode(context)
+                ? secondaryColorLight.withValues(alpha: 0.35)
+                : null,
             border: isCurrentlySelectedCity
                 ? Border.all(color: getSecondaryColor(context), width: 2)
                 : null,

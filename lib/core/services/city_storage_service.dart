@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:tonga_weather/core/local_storage/local_storage.dart';
 import '/data/model/city_model.dart';
-import '../../common/app_exceptions.dart';
+import '../common/app_exceptions.dart';
 
 class CityStorageService {
   final LocalStorage localStorage;

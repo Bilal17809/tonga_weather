@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../constants/constant.dart';
 import '../local_storage/local_storage.dart';
-import '../theme/app_colors.dart';
-import '../theme/app_styles.dart';
-import '../theme/app_theme.dart';
+import '/core/theme/theme.dart';
 import '../utils/drawer_helper.dart';
 
-class CustomDrawer extends StatelessWidget {
-  const CustomDrawer({super.key});
+class AppDrawer extends StatelessWidget {
+  const AppDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +27,7 @@ class CustomDrawer extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(top: kElementGap),
                       child: Image.asset(
-                        'images/clear.png',
+                        'images/Icon.png',
                         height: primaryIcon(context),
                       ),
                     ),

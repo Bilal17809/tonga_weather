@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tonga_weather/presentation/splash/controller/splash_controller.dart';
-import '../../../../core/common_widgets/common_shimmer.dart';
-import '../../../../core/constants/constant.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_styles.dart';
-import '../../../../core/theme/app_theme.dart';
-import '../../../daily_forecast/view/daily_forecast_view.dart';
+import 'package:tonga_weather/core/common_widgets/common_widgets.dart';
+import '/core/constants/constant.dart';
+import '/core/theme/theme.dart';
+import '/presentation/daily_forecast/view/daily_forecast_view.dart';
 import '../../controller/home_controller.dart';
 
 class WeatherBody extends StatelessWidget {

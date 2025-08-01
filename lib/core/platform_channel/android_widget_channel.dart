@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import '../global_controllers/condition_controller.dart';
+import '/core/services/services.dart';
 
 class WidgetUpdateManager {
   static Timer? _timer;
@@ -20,7 +20,7 @@ class WidgetUpdateManager {
   }
 
   static Future<void> _waitForWeatherData() async {
-    final controller = Get.find<ConditionController>();
+    final controller = Get.find<ConditionService>();
     for (var i = 0; i < 60; i++) {
       if (controller.mainCityWeather.value != null &&
           controller.mainCityName.value.isNotEmpty &&
@@ -33,7 +33,7 @@ class WidgetUpdateManager {
 
   static void updateWeatherWidget() {
     try {
-      final controller = Get.find<ConditionController>();
+      final controller = Get.find<ConditionService>();
       final weather = controller.mainCityWeather.value;
       final city = controller.mainCityName.value;
 

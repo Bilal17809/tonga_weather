@@ -1,4 +1,4 @@
-import 'package:tonga_weather/core/global/global_services/weather_parse_service.dart';
+import '/core/services/services.dart';
 import 'aqi_model.dart';
 
 class WeatherModel {
