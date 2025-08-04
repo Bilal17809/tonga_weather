@@ -81,7 +81,7 @@ class SplashView extends StatelessWidget {
                   ),
                   Padding(
                     padding: EdgeInsets.only(
-                      bottom: mobileHeight(context) * 0.12,
+                      bottom: mobileHeight(context) * 0.1,
                     ),
                     child: AnimatedSwitcher(
                       duration: const Duration(seconds: 1),
@@ -106,9 +106,9 @@ class SplashView extends StatelessWidget {
                                 ),
                               ),
                             )
-                          : LoadingAnimationWidget.hexagonDots(
+                          : LoadingAnimationWidget.newtonCradle(
                               color: kOrange,
-                              size: mobileWidth(context) * 0.1,
+                              size: mobileWidth(context) * 0.2,
                             ),
                     ),
                   ),

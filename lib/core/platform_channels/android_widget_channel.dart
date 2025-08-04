@@ -24,7 +24,8 @@ class WidgetUpdateManager {
     for (var i = 0; i < 60; i++) {
       if (controller.mainCityWeather.value != null &&
           controller.mainCityName.value.isNotEmpty &&
-          controller.mainCityName.value != 'Loading...') {
+          controller.mainCityName.value != 'Loading...' &&
+          controller.weeklyForecast.isNotEmpty) {
         return;
       }
       await Future.delayed(const Duration(milliseconds: 500));

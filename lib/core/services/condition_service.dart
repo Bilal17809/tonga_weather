@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:tonga_weather/core/platform_channel/android_widget_channel.dart';
+import '/core/platform_channels/android_widget_channel.dart';
 import '/data/model/weather_model.dart';
 import '/data/model/forecast_model.dart';
 import '/presentation/home/controller/home_controller.dart';
