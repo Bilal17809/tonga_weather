@@ -1,22 +1,24 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:tonga_weather/core/services/aqi_service.dart';
+import 'package:tonga_weather/core/services/onesignal.dart';
 import 'package:tonga_weather/presentation/splash/view/splash_view.dart';
-import 'ads_manager/app_open_ads.dart';
+import '/ads_manager/ads_manager.dart';
 import 'core/binders/dependency_injection.dart';
 import 'core/local_storage/local_storage.dart';
 import '/core/theme/theme.dart';
-import 'core/services/weather_codes_loader.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   MobileAds.instance.initialize();
-  await WeatherCodesLoader.loadWeatherCodes();
   await AqiService.initialize();
   Get.put(AppOpenAdManager());
   DependencyInjection.init();
+  OnesignalService.init();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   final storage = LocalStorage();
   final isDark = await storage.getBool('isDarkMode');

@@ -4,6 +4,7 @@ import 'aqi_model.dart';
 class WeatherModel {
   final String cityName;
   final double temperature;
+  final String region;
   final String condition;
   final int humidity;
   final double windSpeed;
@@ -22,6 +23,7 @@ class WeatherModel {
     required this.iconUrl,
     required this.code,
     this.airQuality,
+    required this.region,
   });
 
   factory WeatherModel.fromJson(Map<String, dynamic> json) {
@@ -30,9 +32,9 @@ class WeatherModel {
     final forecastHours =
         json['forecast']['forecastday'][0]['hour'] as List<dynamic>;
     final currentTime = DateTime.now();
-
     return WeatherModel(
       cityName: json['location']['name'],
+      region: json['location']['region'],
       temperature: (current['temp_c'] as num).toDouble(),
       condition: condition['text'],
       humidity: current['humidity'],

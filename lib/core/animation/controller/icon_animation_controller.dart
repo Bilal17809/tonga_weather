@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../extension/weather_condition_extension.dart';
 
-class WeatherAnimationController {
+class IconAnimationController {
   late AnimationController _animationController;
   late Animation<double> _animation;
   late TickerProvider _vsync;

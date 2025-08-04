@@ -9,3 +9,4 @@ export 'load_weather_service.dart';
 export 'weather_parse_service.dart';
 export 'date_time_service.dart';
 export 'fetch_current_hour.dart';
+export 'remote_config_service.dart';

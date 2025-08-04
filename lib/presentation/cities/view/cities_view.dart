@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tonga_weather/ads_manager/interstitial_ads.dart';
 import '/core/theme/theme.dart';
 import 'package:tonga_weather/presentation/cities/view/widgets/city_card.dart';
 import 'package:tonga_weather/presentation/cities/view/widgets/current_location_card.dart';
 import '/core/animation/view/animated_bg_builder.dart';
-import '/ads_manager/banner_ads.dart';
+import '/ads_manager/ads_manager.dart';
 import 'package:tonga_weather/core/common_widgets/common_widgets.dart';
 import '/core/constants/constant.dart';
 import '../controller/cities_controller.dart';

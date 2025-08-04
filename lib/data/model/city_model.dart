@@ -3,12 +3,14 @@ class CityModel {
   final String cityAscii;
   final double latitude;
   final double longitude;
+  final String? region;
 
   CityModel({
     required this.city,
     required this.cityAscii,
     required this.latitude,
     required this.longitude,
+    this.region,
   });
 
   factory CityModel.fromJson(Map<String, dynamic> json) {
@@ -17,22 +19,17 @@ class CityModel {
       cityAscii: json['cityAscii'],
       latitude: json['latitude'],
       longitude: json['longitude'],
+      region: json['region'],
     );
   }
-  factory CityModel.fallback(String cityName, {double? lat, double? lon}) {
-    return CityModel(
-      city: cityName,
-      cityAscii: cityName,
-      latitude: lat ?? 0.0,
-      longitude: lon ?? 0.0,
-    );
-  }
+
   Map<String, dynamic> toJson() {
     return {
       'city': city,
       'cityAscii': cityAscii,
       'latitude': latitude,
       'longitude': longitude,
+      'region': region,
     };
   }
 }

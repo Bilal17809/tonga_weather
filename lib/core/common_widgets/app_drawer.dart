@@ -27,7 +27,7 @@ class AppDrawer extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(top: kElementGap),
                       child: Image.asset(
-                        'images/Icon.png',
+                        'images/icon.png',
                         height: primaryIcon(context),
                       ),
                     ),

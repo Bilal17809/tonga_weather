@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tonga_weather/core/utils/weather_utils.dart';
 import 'package:tonga_weather/presentation/home/controller/home_controller.dart';
-import '../../constants/constant.dart';
-import '../controller/animation_controller.dart';
+import '/core/constants/constant.dart';
+import '../controller/bg_animation_controller.dart';
 import 'animated_bg_image.dart';
 
 class AnimatedBgImageBuilder extends StatelessWidget {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:tonga_weather/presentation/home/view/home_view.dart';
-import '../../../core/animation/view/animated_weather_icon.dart';
+import '/core/animation/view/animated_weather_icon.dart';
 import '/core/constants/constant.dart';
 import '../controller/splash_controller.dart';
 import 'package:tonga_weather/core/common_widgets/common_widgets.dart';

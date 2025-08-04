@@ -24,12 +24,12 @@ class AnimatedWeatherIcon extends StatefulWidget {
 
 class _AnimatedWeatherIconState extends State<AnimatedWeatherIcon>
     with TickerProviderStateMixin {
-  late WeatherAnimationController _weatherAnimationController;
+  late IconAnimationController _weatherAnimationController;
 
   @override
   void initState() {
     super.initState();
-    _weatherAnimationController = WeatherAnimationController();
+    _weatherAnimationController = IconAnimationController();
     _weatherAnimationController.initialize(
       vsync: this,
       condition: _getWeatherCondition(),
@@ -41,11 +41,8 @@ class _AnimatedWeatherIconState extends State<AnimatedWeatherIcon>
       final code = widget.weatherCode!;
       return code.toWeatherCondition;
     }
-    if (widget.condition != null) {
-      final cond = widget.condition!;
-      return cond.toWeatherCondition;
-    }
-    return WeatherCondition.clear;
+    final cond = widget.condition;
+    return cond.toWeatherCondition;
   }
 
   @override
@@ -66,11 +63,7 @@ class _AnimatedWeatherIconState extends State<AnimatedWeatherIcon>
   @override
   Widget build(BuildContext context) {
     return _weatherAnimationController.applyAnimation(
-      Image.asset(
-        widget.imagePath ?? '',
-        width: widget.width,
-        height: widget.height,
-      ),
+      Image.asset(widget.imagePath, width: widget.width, height: widget.height),
     );
   }
 }

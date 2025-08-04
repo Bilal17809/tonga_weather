@@ -3,8 +3,7 @@ import 'package:tonga_weather/core/config/client.dart';
 import 'package:tonga_weather/core/services/weather_codes_loader.dart';
 import 'package:tonga_weather/presentation/daily_forecast/controller/daily_forecast_controller.dart';
 import '/core/services/services.dart';
-import '/ads_manager/banner_ads.dart';
-import '/ads_manager/interstitial_ads.dart';
+import '/ads_manager/ads_manager.dart';
 import '/data/data_source/online_data_sr.dart';
 import '/data/repo/weather_api_impl.dart';
 import '/domain/repositories/weather_repo.dart';
@@ -12,7 +11,7 @@ import '/domain/use_cases/use_case.dart';
 import '/presentation/cities/controller/cities_controller.dart';
 import '/presentation/home/controller/home_controller.dart';
 import '/presentation/splash/controller/splash_controller.dart';
-import '../animation/controller/animation_controller.dart';
+import '../animation/controller/bg_animation_controller.dart';
 import '../local_storage/local_storage.dart';
 
 class DependencyInjection {
@@ -28,6 +27,11 @@ class DependencyInjection {
       () => GetWeatherAndForecast(Get.find<WeatherRepo>()),
       fenix: true,
     );
+    Get.putAsync<WeatherCodesLoader>(() async {
+      final loader = WeatherCodesLoader();
+      await loader.loadWeatherCodes();
+      return loader;
+    });
 
     /// Location and local storage
     Get.lazyPut<LocalStorage>(() => LocalStorage(), fenix: true);

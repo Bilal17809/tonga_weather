@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import '/core/services/services.dart';
 
 class AppOpenAdManager extends GetxController with WidgetsBindingObserver {
   final RxBool isAdVisible = false.obs;
@@ -14,7 +15,7 @@ class AppOpenAdManager extends GetxController with WidgetsBindingObserver {
   void onInit() {
     super.onInit();
     WidgetsBinding.instance.addObserver(this);
-    _loadAppOpenAd();
+    initRemoteConfig();
   }
 
   @override
@@ -35,6 +36,18 @@ class AppOpenAdManager extends GetxController with WidgetsBindingObserver {
         }
         _resumeEligible = false;
       });
+    }
+  }
+
+  Future<void> initRemoteConfig() async {
+    try {
+      await RemoteConfigService().init();
+      final showAd = RemoteConfigService().getBool('AppOpenAd');
+      if (showAd) {
+        _loadAppOpenAd();
+      }
+    } catch (e) {
+      debugPrint("Failed to initialize remote config: $e");
     }
   }
 

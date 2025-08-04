@@ -1,11 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tonga_weather/ads_manager/interstitial_ads.dart';
+import '/ads_manager/ads_manager.dart';
 import '/core/mixins/connectivity_mixin.dart';
 import '/core/services/services.dart';
 import 'package:tonga_weather/data/model/city_model.dart';
-import '/ads_manager/banner_ads.dart';
 import '/core/constants/constant.dart';
 import '/presentation/splash/controller/splash_controller.dart';
 import '/domain/use_cases/use_case.dart';

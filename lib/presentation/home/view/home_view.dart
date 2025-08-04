@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:panara_dialogs/panara_dialogs.dart';
-import '../../../ads_manager/interstitial_ads.dart';
+import '/ads_manager/ads_manager.dart';
 import '/core/animation/view/animated_bg_builder.dart';
 import '/core/theme/theme.dart';
 import '/presentation/home/controller/home_controller.dart';
 import '/presentation/home/view/widgets/weather_body.dart';
 import '/presentation/home/view/widgets/weather_header.dart';
-import '/ads_manager/banner_ads.dart';
 import '/core/common_widgets/app_drawer.dart';
 import '/core/global_keys/global_key.dart';
 

@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import '/core/mixins/connectivity_mixin.dart';
-import '/ads_manager/banner_ads.dart';
-import '/ads_manager/interstitial_ads.dart';
+import '/ads_manager/ads_manager.dart';
 import '/core/services/services.dart';
 import '/presentation/home/controller/home_controller.dart';
 

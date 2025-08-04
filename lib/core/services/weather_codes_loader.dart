@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 class WeatherCodesLoader {
-  static final Map<int, String> _codeToType = {};
+  final Map<int, String> _codeToType = {};
 
-  static Future<void> loadWeatherCodes() async {
+  Future<void> loadWeatherCodes() async {
     final String jsonString = await rootBundle.loadString(
       'assets/weather_conditions.json',
     );
@@ -12,13 +12,13 @@ class WeatherCodesLoader {
 
     _codeToType.clear();
     data.forEach((key, value) {
-      value.forEach((code) {
+      for (var code in value) {
         _codeToType[code] = key;
-      });
+      }
     });
   }
 
-  static String getWeatherType(int code) {
+  String getWeatherType(int code) {
     return _codeToType[code] ?? 'clear';
   }
 }

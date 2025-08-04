@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shimmer/shimmer.dart';
+import '/core/services/services.dart';
 import '/core/theme/theme.dart';
 import 'app_open_ads.dart';
 
@@ -12,6 +13,12 @@ class BannerAdManager extends GetxController {
   final isBannerAdEnabled = true.obs;
   final AppOpenAdManager appOpenAdManager = Get.put(AppOpenAdManager());
 
+  @override
+  onInit() {
+    super.onInit();
+    initRemoteConfig();
+  }
+
   String get _adUnitId {
     if (Platform.isAndroid) {
       return 'ca-app-pub-3940256099942544/6300978111';
@@ -19,6 +26,22 @@ class BannerAdManager extends GetxController {
       return 'ca-app-pub-3940256099942544/2934735716';
     } else {
       throw UnsupportedError('Unsupported platform');
+    }
+  }
+
+  Future<void> initRemoteConfig() async {
+    try {
+      await RemoteConfigService().init();
+      final showBanner = RemoteConfigService().getBool('BannerAd');
+      isBannerAdEnabled.value = showBanner;
+
+      if (showBanner) {
+        for (int i = 1; i <= 5; i++) {
+          loadBannerAd('ad$i');
+        }
+      }
+    } catch (e) {
+      debugPrint("Failed to init banner remote config: $e");
     }
   }
 

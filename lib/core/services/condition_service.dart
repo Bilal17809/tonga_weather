@@ -1,12 +1,13 @@
 import 'package:get/get.dart';
 import 'package:tonga_weather/core/platform_channel/android_widget_channel.dart';
-import '../../data/model/weather_model.dart';
-import '../../data/model/forecast_model.dart';
+import '/data/model/weather_model.dart';
+import '/data/model/forecast_model.dart';
+import '/presentation/home/controller/home_controller.dart';
 import 'date_time_service.dart';
 
 class ConditionService extends GetxController {
   final mainCityWeather = Rx<WeatherModel?>(null);
-  final selectedCitiesWeather = <WeatherModel>[].obs;
+  final currentLocationWeather = Rx<WeatherModel?>(null);
   final allCitiesWeather = <String, WeatherModel>{}.obs;
   final weeklyForecast = <Map<String, dynamic>>[].obs;
   final mainCityName = ''.obs;
@@ -17,9 +18,14 @@ class ConditionService extends GetxController {
     String cityName,
   ) {
     mainCityName.value = cityName;
-    mainCityWeather.value = (mainIndex < weatherList.length)
+    final newWeather = (mainIndex < weatherList.length)
         ? weatherList[mainIndex]
         : null;
+    mainCityWeather.value = newWeather;
+    final currentCity = Get.find<HomeController>().currentLocationCity;
+    if (currentCity != null && currentCity.city == cityName) {
+      currentLocationWeather.value = newWeather;
+    }
     if (mainCityWeather.value != null) {
       WidgetUpdateManager.updateWeatherWidget();
     }

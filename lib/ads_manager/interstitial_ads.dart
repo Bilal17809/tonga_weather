@@ -2,18 +2,20 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import '/core/services/services.dart';
 
 class InterstitialAdManager extends GetxController {
   InterstitialAd? _currentAd;
   bool _isAdReady = false;
   var isShow = false.obs;
-
   int visitCounter = 0;
-  final int displayThreshold = 3;
+  late int displayThreshold;
 
   @override
   void onInit() {
     super.onInit();
+    displayThreshold = 3;
+    initRemoteConfig();
     _loadAd();
   }
 
@@ -30,6 +32,24 @@ class InterstitialAdManager extends GetxController {
       return 'ca-app-pub-3940256099942544/4411468910';
     } else {
       throw UnsupportedError("Platform not supported");
+    }
+  }
+
+  Future<void> initRemoteConfig() async {
+    try {
+      await RemoteConfigService().init(
+        fetchTimeout: const Duration(seconds: 10),
+        minimumFetchInterval: const Duration(seconds: 1),
+      );
+      final newThreshold = RemoteConfigService().getInt(
+        'InterstitialAd',
+        'InterstitialAd',
+      );
+      if (newThreshold > 0) {
+        displayThreshold = newThreshold;
+      }
+    } catch (e) {
+      debugPrint("Failed to load Interstitial RemoteConfig: $e");
     }
   }
 
