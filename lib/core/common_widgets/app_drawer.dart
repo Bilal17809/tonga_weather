@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tonga_weather/presentation/premium_screen/premium_screen.dart';
@@ -67,14 +69,16 @@ class AppDrawer extends StatelessWidget {
                 DrawerActions.rateUs();
               },
             ),
-            DrawerTile(
-              icon: Icons.star_rounded,
-              title: 'Remove Ads',
-              onTap: () {
-                Get.to(PremiumScreen());
-              },
-            ),
-            Divider(color: primaryColorLight.withValues(alpha: 0.1)),
+            if (Platform.isIOS) ...[
+              DrawerTile(
+                icon: Icons.star_rounded,
+                title: 'Remove Ads',
+                onTap: () {
+                  Get.to(PremiumScreen());
+                },
+              ),
+              Divider(color: primaryColorLight.withValues(alpha: 0.1)),
+            ],
             ListTile(
               leading: Icon(
                 Icons.dark_mode_rounded,
