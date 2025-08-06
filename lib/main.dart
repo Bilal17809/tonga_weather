@@ -16,7 +16,7 @@ void main() async {
   await Firebase.initializeApp();
   MobileAds.instance.initialize();
   await AqiService.initialize();
-  Get.put(AppOpenAdManager());
+  Get.put(AppOpenAdController());
   DependencyInjection.init();
   OnesignalService.init();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);

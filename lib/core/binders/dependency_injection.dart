@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:tonga_weather/ads_manager/splash_interstitial.dart';
 import 'package:tonga_weather/core/config/client.dart';
 import 'package:tonga_weather/core/services/weather_codes_loader.dart';
 import 'package:tonga_weather/presentation/daily_forecast/controller/daily_forecast_controller.dart';
@@ -82,6 +83,10 @@ class DependencyInjection {
     Get.lazyPut<BannerAdManager>(() => BannerAdManager(), fenix: true);
     Get.lazyPut<InterstitialAdManager>(
       () => InterstitialAdManager(),
+      fenix: true,
+    );
+    Get.lazyPut<SplashInterstitialAdController>(
+          () => SplashInterstitialAdController(),
       fenix: true,
     );
   }

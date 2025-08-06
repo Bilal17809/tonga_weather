@@ -53,7 +53,11 @@ android {
         jvmTarget = "11"
     }
 }
+apply(plugin = "com.google.gms.google-services")
+apply(plugin = "com.google.firebase.crashlytics")
 
-flutter {
-    source = "../.."
+dependencies {
+    implementation("com.google.android.gms:play-services-ads:24.4.0")
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-crashlytics")
 }

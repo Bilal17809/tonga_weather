@@ -17,7 +17,7 @@ class DrawerActions {
 
   static Future<void> rateUs() async {
     const androidUrl =
-        'https://play.google.com/store/apps/details?id=com.unisoftaps.estoniaweatherforecast';
+        'https://play.google.com/store/apps/details?id=com.unisoftapps.tongaweatherforecast';
     const iosUrl =
         'https://apps.apple.com/us/app/Estonia Weather Forecast/6748671693';
 

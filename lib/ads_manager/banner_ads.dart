@@ -11,7 +11,7 @@ class BannerAdManager extends GetxController {
   final _adInstances = <String, BannerAd>{};
   final _adStatusMap = <String, RxBool>{};
   final isBannerAdEnabled = true.obs;
-  final AppOpenAdManager appOpenAdManager = Get.put(AppOpenAdManager());
+  final AppOpenAdController appOpenAdManager = Get.put(AppOpenAdController());
 
   @override
   onInit() {
@@ -21,9 +21,9 @@ class BannerAdManager extends GetxController {
 
   String get _adUnitId {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-3940256099942544/6300978111';
+      return 'ca-app-pub-8172082069591999/2161158625';
     } else if (Platform.isIOS) {
-      return 'ca-app-pub-3940256099942544/2934735716';
+      return '';
     } else {
       throw UnsupportedError('Unsupported platform');
     }
@@ -73,7 +73,7 @@ class BannerAdManager extends GetxController {
     final ad = _adInstances[key];
     final isLoaded = _adStatusMap[key]?.value ?? false;
 
-    if (appOpenAdManager.isAdVisible.value) return const SizedBox();
+    if (appOpenAdManager.isShowingOpenAd.value) return const SizedBox();
 
     if (isBannerAdEnabled.value && ad != null && isLoaded) {
       return SafeArea(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tonga_weather/presentation/premium_screen/premium_screen.dart';
 import '../constants/constant.dart';
 import '../local_storage/local_storage.dart';
 import '/core/theme/theme.dart';
@@ -36,7 +37,7 @@ class AppDrawer extends StatelessWidget {
                   FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
-                      'Tonga Weather',
+                      'Tonga Weather Forecast',
                       style: headlineSmallStyle(context),
                     ),
                   ),
@@ -64,6 +65,13 @@ class AppDrawer extends StatelessWidget {
               title: 'Rate Us',
               onTap: () {
                 DrawerActions.rateUs();
+              },
+            ),
+            DrawerTile(
+              icon: Icons.star_rounded,
+              title: 'Remove Ads',
+              onTap: () {
+                Get.to(PremiumScreen());
               },
             ),
             Divider(color: primaryColorLight.withValues(alpha: 0.1)),

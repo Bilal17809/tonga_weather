@@ -2,18 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:tonga_weather/presentation/home/view/home_view.dart';
+import '../../../ads_manager/splash_interstitial.dart';
 import '/core/animation/view/animated_weather_icon.dart';
 import '/core/constants/constant.dart';
 import '../controller/splash_controller.dart';
 import 'package:tonga_weather/core/common_widgets/common_widgets.dart';
 import '/core/theme/theme.dart';
 
-class SplashView extends StatelessWidget {
+class SplashView extends StatefulWidget {
   const SplashView({super.key});
 
   @override
+  State<SplashView> createState() => _SplashViewState();
+}
+
+class _SplashViewState extends State<SplashView> {
+  @override
   Widget build(BuildContext context) {
     final controller = Get.find<SplashController>();
+    final splashAds = Get.find<SplashInterstitialAdController>();
     return Scaffold(
       backgroundColor: kWhite,
       body: Obx(
@@ -100,7 +107,13 @@ class SplashView extends StatelessWidget {
                                   shadowColor: kDarkOrange,
                                   textColor: kBlack,
                                   onPressed: () async {
-                                    Get.to(() => HomeView());
+                                    if(splashAds.isAdReady){
+                                      splashAds.showInterstitialAd();
+                                      Get.to(() => HomeView());
+                                    }
+                                    else{
+                                      Get.to(() => HomeView());
+                                    }
                                   },
                                   text: "Let's Go",
                                 ),

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:tonga_weather/core/common/app_exceptions.dart';
 import 'package:tonga_weather/core/theme/app_colors.dart';
+import '../../../ads_manager/splash_interstitial.dart';
 import '/core/mixins/connectivity_mixin.dart';
 import '/core/services/services.dart';
 import '/core/local_storage/local_storage.dart';
@@ -17,6 +18,7 @@ class SplashController extends GetxController with ConnectivityMixin {
   final LoadCitiesService cityService;
   final CityStorageService cityStorageService;
   final LoadWeatherService loadWeatherService;
+  final SplashInterstitialAdController splashAds=Get.put(SplashInterstitialAdController());
 
   SplashController({
     required this.getCurrentWeather,
@@ -50,6 +52,7 @@ class SplashController extends GetxController with ConnectivityMixin {
   @override
   void onInit() {
     super.onInit();
+    splashAds.loadInterstitialAd();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _startSloganAnimation();
       _animateTitle();
