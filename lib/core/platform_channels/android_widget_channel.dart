@@ -57,7 +57,7 @@ class WidgetUpdateManager {
 }
 
 class WidgetUpdaterService {
-  static const _channel = MethodChannel('com.unisoftapps.tonga_weather/widget');
+  static const _channel = MethodChannel('tongaweatherforecast/widget');
 
   static Future<void> updateWidget(Map<String, String> data) async {
     try {

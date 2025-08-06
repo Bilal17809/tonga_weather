@@ -1,4 +1,4 @@
-package com.unisoftapps.tonga_weather
+package com.unisoftapps.tongaweatherforecast
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager

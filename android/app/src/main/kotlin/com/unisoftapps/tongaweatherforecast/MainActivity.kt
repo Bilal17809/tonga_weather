@@ -1,4 +1,4 @@
-package com.unisoftapps.tonga_weather
+package com.unisoftapps.tongaweatherforecast
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
@@ -12,7 +12,7 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
-    private val CHANNEL = "com.unisoftapps.tonga_weather/widget"
+    private val CHANNEL = "com.unisoftapps.tongaweatherforecast/widget"
     private var widgetLaunchDetected = false
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {

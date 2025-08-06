@@ -36,7 +36,7 @@ class AppDrawer extends StatelessWidget {
                   FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
-                      'Estonia Weather',
+                      'Tonga Weather',
                       style: headlineSmallStyle(context),
                     ),
                   ),
