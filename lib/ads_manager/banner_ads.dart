@@ -1,20 +1,25 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shimmer/shimmer.dart';
-import '../core/theme/app_theme.dart';
+import '/core/services/services.dart';
+import '/core/theme/theme.dart';
 import 'app_open_ads.dart';
 
-class BannerAdController extends GetxController {
-  final Map<String, BannerAd> _ads = {};
-  final Map<String, RxBool> _adLoaded = {};
-  RxBool isAdEnabled = true.obs;
-  final AppOpenAdController openAdController = Get.put(AppOpenAdController());
+class BannerAdManager extends GetxController {
+  final _adInstances = <String, BannerAd>{};
+  final _adStatusMap = <String, RxBool>{};
+  final isBannerAdEnabled = true.obs;
+  final AppOpenAdManager appOpenAdManager = Get.put(AppOpenAdManager());
 
-  String get bannerAdUnitId {
+  @override
+  onInit() {
+    super.onInit();
+    initRemoteConfig();
+  }
+
+  String get _adUnitId {
     if (Platform.isAndroid) {
       return 'ca-app-pub-3940256099942544/6300978111';
     } else if (Platform.isIOS) {
@@ -24,68 +29,65 @@ class BannerAdController extends GetxController {
     }
   }
 
-  void loadBannerAd(String key) async {
-    if (_ads.containsKey(key)) {
-      _ads[key]!.dispose();
-    }
-    final screenWidth = Get.context!.mediaQuerySize.width.toInt();
+  Future<void> initRemoteConfig() async {
+    try {
+      await RemoteConfigService().init();
+      final showBanner = RemoteConfigService().getBool('BannerAd');
+      isBannerAdEnabled.value = showBanner;
 
-    final bannerAd = BannerAd(
-      adUnitId: bannerAdUnitId,
+      if (showBanner) {
+        for (int i = 1; i <= 5; i++) {
+          loadBannerAd('ad$i');
+        }
+      }
+    } catch (e) {
+      debugPrint("Failed to init banner remote config: $e");
+    }
+  }
+
+  void loadBannerAd(String key) {
+    _adInstances[key]?.dispose();
+
+    final screenWidth = Get.context!.mediaQuerySize.width.toInt();
+    final ad = BannerAd(
+      adUnitId: _adUnitId,
       size: AdSize(height: 55, width: screenWidth),
-      request: AdRequest(),
+      request: const AdRequest(),
       listener: BannerAdListener(
-        onAdLoaded: (ad) {
-          _adLoaded[key] = true.obs;
-          debugPrint("Banner Ad Loaded for key: $key");
+        onAdLoaded: (_) {
+          _adStatusMap[key] = true.obs;
+          debugPrint("BannerAd loaded for: $key");
         },
-        onAdFailedToLoad: (ad, error) {
-          _adLoaded[key] = false.obs;
-          debugPrint("Ad failed to load for key $key: ${error.message}");
+        onAdFailedToLoad: (_, error) {
+          _adStatusMap[key] = false.obs;
+          debugPrint("BannerAd load failed ($key): ${error.message}");
         },
       ),
     );
 
-    bannerAd.load();
-    _ads[key] = bannerAd;
+    ad.load();
+    _adInstances[key] = ad;
   }
 
-  @override
-  void onClose() {
-    for (final ad in _ads.values) {
-      ad.dispose();
-    }
-    super.onClose();
-  }
+  Widget showBannerAd(String key) {
+    final ad = _adInstances[key];
+    final isLoaded = _adStatusMap[key]?.value ?? false;
 
-  Widget getBannerAdWidget(String key) {
-    if (openAdController.isShowingOpenAd.value) {
-      return const SizedBox();
-    }
-    if (isAdEnabled.value &&
-        _ads.containsKey(key) &&
-        _adLoaded[key]?.value == true) {
+    if (appOpenAdManager.isAdVisible.value) return const SizedBox();
+
+    if (isBannerAdEnabled.value && ad != null && isLoaded) {
       return SafeArea(
-        top: false,
         bottom: true,
-        left: false,
-        right: false,
         child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300, width: 2),
-            borderRadius: BorderRadius.circular(2),
-          ),
-          height: _ads[key]!.size.height.toDouble(),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(2)),
+          height: ad.size.height.toDouble(),
           width: double.infinity,
-          child: AdWidget(ad: _ads[key]!),
+          child: AdWidget(ad: ad),
         ),
       );
     } else {
       return SafeArea(
-        top: false,
         bottom: true,
-        left: false,
-        right: false,
         child: Shimmer.fromColors(
           baseColor: getBgColor(Get.context!),
           highlightColor: getPrimaryColor(Get.context!),
@@ -93,15 +95,22 @@ class BannerAdController extends GetxController {
             padding: const EdgeInsets.all(8.0),
             child: Container(
               height: 50,
-              width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(5.0),
+                color: kWhite,
+                borderRadius: BorderRadius.circular(5),
               ),
             ),
           ),
         ),
       );
     }
+  }
+
+  @override
+  void onClose() {
+    for (final ad in _adInstances.values) {
+      ad.dispose();
+    }
+    super.onClose();
   }
 }

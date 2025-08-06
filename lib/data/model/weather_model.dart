@@ -1,9 +1,10 @@
-import '../../core/utils/date_time_util.dart';
+import '/core/services/services.dart';
 import 'aqi_model.dart';
 
 class WeatherModel {
   final String cityName;
   final double temperature;
+  final String region;
   final String condition;
   final int humidity;
   final double windSpeed;
@@ -22,48 +23,29 @@ class WeatherModel {
     required this.iconUrl,
     required this.code,
     this.airQuality,
+    required this.region,
   });
 
-  factory WeatherModel.fromForecastJson(Map<String, dynamic> json) {
-    final currentTime = DateTime.now();
-    final hourlyData =
+  factory WeatherModel.fromJson(Map<String, dynamic> json) {
+    final current = json['current'];
+    final condition = current['condition'];
+    final forecastHours =
         json['forecast']['forecastday'][0]['hour'] as List<dynamic>;
-
-    int currentChanceOfRain = 0;
-    for (var hour in hourlyData) {
-      final hourTime = DateTimeUtils.parseLocal(hour['time']);
-
-      if (hourTime.hour == currentTime.hour &&
-          hourTime.day == currentTime.day &&
-          hourTime.month == currentTime.month &&
-          hourTime.year == currentTime.year) {
-        currentChanceOfRain = hour['chance_of_rain'] ?? 0;
-        break;
-      }
-    }
-
-    final windSpeedKmh =
-        (json['current']?['wind_kph'] as num?)?.toDouble() ?? 0.0;
-
-    final iconUrl = json['current']?['condition']?['icon'] != null
-        ? 'https:${json['current']['condition']['icon']}'
-        : '';
-
-    AirQualityModel? airQuality;
-    if (json['current']?['air_quality'] != null) {
-      airQuality = AirQualityModel.fromJson(json['current']['air_quality']);
-    }
-
+    final currentTime = DateTime.now();
     return WeatherModel(
       cityName: json['location']['name'],
-      temperature: (json['current']['temp_c'] as num).toDouble(),
-      condition: json['current']['condition']['text'],
-      humidity: json['current']['humidity'],
-      windSpeed: windSpeedKmh,
-      chanceOfRain: currentChanceOfRain,
-      iconUrl: iconUrl,
-      code: json['current']['condition']['code'],
-      airQuality: airQuality,
+      region: json['location']['region'],
+      temperature: (current['temp_c'] as num).toDouble(),
+      condition: condition['text'],
+      humidity: current['humidity'],
+      windSpeed: WeatherParsingService.parseWindSpeed(current),
+      chanceOfRain: WeatherParsingService.extractCurrentChanceOfRain(
+        forecastHours,
+        currentTime,
+      ),
+      iconUrl: WeatherParsingService.parseIconUrl(condition),
+      code: condition['code'],
+      airQuality: WeatherParsingService.parseAirQuality(current['air_quality']),
     );
   }
 }

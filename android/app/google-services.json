@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "904190703717",
+    "project_id": "tonga-weather",
+    "storage_bucket": "tonga-weather.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:904190703717:android:f4a0cf20d6d197f64c2e8c",
+        "android_client_info": {
+          "package_name": "com.unisoftapps.tongaweatherforecast"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7jhRXg4ja01y27w9OvymhaRoPFOvJqJM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

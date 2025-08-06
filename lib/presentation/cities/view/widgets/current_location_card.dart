@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:toastification/toastification.dart';
-import 'package:tonga_weather/core/common_widgets/custom_toast.dart';
-import 'package:tonga_weather/core/theme/app_theme.dart';
-import '../../../../core/common/app_exceptions.dart';
-import '../../../../core/constants/constant.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_styles.dart';
-import '../../../home/controller/home_controller.dart';
+import '/core/common_widgets/common_widgets.dart';
+import '/core/services/condition_service.dart';
+import '/core/theme/theme.dart';
+import '/core/common/app_exceptions.dart';
+import '/core/constants/constant.dart';
+import '/presentation/home/controller/home_controller.dart';
 import '../../controller/cities_controller.dart';
 
 class CurrentLocationCard extends StatelessWidget {
@@ -17,6 +16,8 @@ class CurrentLocationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final HomeController homeController = Get.find();
+    final weatherModel =
+        Get.find<ConditionService>().currentLocationWeather.value;
 
     return Obx(() {
       final currentCity = homeController.currentLocationCity;
@@ -86,7 +87,9 @@ class CurrentLocationCard extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Text(
-                                currentCity?.city ?? 'Error Fetching City',
+                                currentCity != null
+                                    ? '${currentCity.city}/${weatherModel?.region ?? ''}'
+                                    : 'Error Fetching City',
                                 style: bodyLargeStyle(context).copyWith(
                                   color: kWhite.withValues(alpha: 0.8),
                                 ),

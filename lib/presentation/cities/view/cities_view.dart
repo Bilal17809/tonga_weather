@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tonga_weather/core/theme/app_theme.dart';
+import '/core/theme/theme.dart';
 import 'package:tonga_weather/presentation/cities/view/widgets/city_card.dart';
 import 'package:tonga_weather/presentation/cities/view/widgets/current_location_card.dart';
-import 'package:tonga_weather/animation/view/animated_bg_builder.dart';
-import '../../../ads_manager/banner_ads.dart';
-import '../../../ads_manager/interstitial_ads.dart';
-import '../../../core/common_widgets/custom_appbar.dart';
-import '../../../core/common_widgets/search_bar.dart';
-import '../../../core/constants/constant.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_styles.dart';
+import '/core/animation/view/animated_bg_builder.dart';
+import '/ads_manager/ads_manager.dart';
+import 'package:tonga_weather/core/common_widgets/common_widgets.dart';
+import '/core/constants/constant.dart';
 import '../controller/cities_controller.dart';
 
 class CitiesView extends StatelessWidget {
@@ -28,7 +24,7 @@ class CitiesView extends StatelessWidget {
             SafeArea(
               child: Column(
                 children: [
-                  CustomAppBar(subtitle: 'Manage Cities'),
+                  TitleBar(subtitle: 'Manage Cities'),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(
                       kBodyHp,
@@ -115,15 +111,13 @@ class CitiesView extends StatelessWidget {
             ),
           ],
         ),
-        bottomNavigationBar: Get.find<InterstitialAdController>().isAdReady
-            ? SizedBox()
-            : Obx(() {
-                final banner = Get.find<BannerAdController>();
-                debugPrint(
-                  '####UI ---- isAdEnabled=${banner.isAdEnabled.value}',
-                );
-                return banner.getBannerAdWidget('ad3');
-              }),
+        bottomNavigationBar: Obx(() {
+          final interstitialManager = Get.find<InterstitialAdManager>();
+          final bannerAdManager = Get.find<BannerAdManager>();
+          return interstitialManager.isShow.value
+              ? const SizedBox()
+              : bannerAdManager.showBannerAd('ad3');
+        }),
       ),
     );
   }

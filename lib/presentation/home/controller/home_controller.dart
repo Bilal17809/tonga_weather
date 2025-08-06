@@ -1,16 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tonga_weather/core/global/global_controllers/condition_controller.dart';
-import 'package:tonga_weather/core/global/global_services/city_storage_service.dart';
-import 'package:tonga_weather/core/global/global_services/connectivity_service.dart';
+import '/ads_manager/ads_manager.dart';
+import '/core/mixins/connectivity_mixin.dart';
+import '/core/services/services.dart';
 import 'package:tonga_weather/data/model/city_model.dart';
-import '../../../ads_manager/banner_ads.dart';
-import '../../../ads_manager/interstitial_ads.dart';
-import '../../../core/constants/constant.dart';
-import '../../../core/global/global_services/load_weather_service.dart';
-import '../../splash/controller/splash_controller.dart';
-import '../../../domain/use_cases/get_current_weather.dart';
+import '/core/constants/constant.dart';
+import '/presentation/splash/controller/splash_controller.dart';
+import '/domain/use_cases/use_case.dart';
 
 class HomeController extends GetxController with ConnectivityMixin {
   final GetWeatherAndForecast getCurrentWeather;
@@ -21,8 +18,8 @@ class HomeController extends GetxController with ConnectivityMixin {
     : cityStorageService = Get.find<CityStorageService>(),
       loadWeatherService = Get.find<LoadWeatherService>();
 
-  SplashController get splashController => Get.find<SplashController>();
-  final conditionController = Get.find<ConditionController>();
+  final splashController = Get.find<SplashController>();
+  final conditionController = Get.find<ConditionService>();
   var isDrawerOpen = false.obs;
   final isLoading = false.obs;
   final selectedCities = <CityModel>[].obs;
@@ -34,8 +31,8 @@ class HomeController extends GetxController with ConnectivityMixin {
   @override
   void onInit() async {
     super.onInit();
-    Get.find<InterstitialAdController>().checkAndShowAd();
-    Get.find<BannerAdController>().loadBannerAd('ad1');
+    Get.find<InterstitialAdManager>().checkAndDisplayAd();
+    Get.find<BannerAdManager>().loadBannerAd('ad1');
     while (!splashController.isAppReady) {
       await Future.delayed(const Duration(milliseconds: 50));
     }
@@ -51,7 +48,8 @@ class HomeController extends GetxController with ConnectivityMixin {
     _setupAutoScroll();
     ever(splashController.selectedCity, (CityModel? newCity) async {
       if (newCity != null &&
-          selectedCity.value?.latLonKey != newCity.latLonKey) {
+          LocationUtilsService.fromCityModel(selectedCity.value!) !=
+              LocationUtilsService.fromCityModel(newCity)) {
         selectedCities.value = [newCity];
         await _initializeSelectedCity(newCity);
         _performAutoScroll();

@@ -2,134 +2,107 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:flutter/cupertino.dart';
+import '/core/services/services.dart';
 
-class AppOpenAdController extends GetxController with WidgetsBindingObserver {
-  final RxBool isShowingOpenAd = false.obs;
+class AppOpenAdManager extends GetxController with WidgetsBindingObserver {
+  final RxBool isAdVisible = false.obs;
 
-  AppOpenAd? _appOpenAd;
-  bool _isAdAvailable = false;
-  bool shouldShowAppOpenAd = true;
-  bool isCooldownActive = false;
-  bool _interstitialAdDismissed = false;
-  bool _openAppAdEligible = false;
-  bool isAppResumed = false;
-  bool _isSplashInterstitialShown = false;
+  AppOpenAd? _currentAd;
+  bool _canDisplayAd = false;
+  bool _resumeEligible = false;
 
   @override
   void onInit() {
     super.onInit();
-    loadAd();
-  }
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      debugPrint("App moved to background.");
-      _openAppAdEligible = true;
-    } else if (state == AppLifecycleState.resumed) {
-      debugPrint("App moved to foreground.");
-
-      Future.delayed(const Duration(milliseconds: 100), () {
-        if (_openAppAdEligible && !_interstitialAdDismissed) {
-          showAdIfAvailable();
-        } else {
-          debugPrint("Skipping Open App Ad (flags not met).");
-        }
-        _openAppAdEligible = false;
-        _interstitialAdDismissed = false;
-      });
-    }
-  }
-
-  void showAdIfAvailable() {
-    if (_isAdAvailable && _appOpenAd != null && !isCooldownActive) {
-      _appOpenAd!.fullScreenContentCallback = FullScreenContentCallback(
-        onAdShowedFullScreenContent: (ad) {
-          debugPrint('App Open Ad is showing.');
-          isShowingOpenAd.value = true;
-        },
-        onAdDismissedFullScreenContent: (ad) {
-          debugPrint('App Open Ad dismissed.');
-          _appOpenAd = null;
-          _isAdAvailable = false;
-          isShowingOpenAd.value = false;
-          loadAd();
-          activateCooldown();
-        },
-        onAdFailedToShowFullScreenContent: (ad, error) {
-          debugPrint('Failed to show App Open Ad: $error');
-          _appOpenAd = null;
-          _isAdAvailable = false;
-          isShowingOpenAd.value = false;
-          loadAd();
-        },
-      );
-
-      _appOpenAd!.show();
-      _appOpenAd = null;
-      _isAdAvailable = false;
-    } else {
-      debugPrint('No App Open Ad available to show.');
-      loadAd();
-    }
-  }
-
-  void activateCooldown() {
-    isCooldownActive = true;
-    Future.delayed(const Duration(seconds: 5), () {
-      isCooldownActive = false;
-    });
-  }
-
-  String get appOpenAdUnitId {
-    if (Platform.isAndroid) {
-      return 'ca-app-pub-3940256099942544/3419835294';
-    } else if (Platform.isIOS) {
-      return 'ca-app-pub-3940256099942544/5662855259';
-    } else {
-      throw UnsupportedError('Unsupported platform');
-    }
-  }
-
-  void loadAd() {
-    if (!shouldShowAppOpenAd) return;
-    AppOpenAd.load(
-      adUnitId: appOpenAdUnitId,
-      request: const AdRequest(),
-      adLoadCallback: AppOpenAdLoadCallback(
-        onAdLoaded: (ad) {
-          _appOpenAd = ad;
-          _isAdAvailable = true;
-          debugPrint('App Open Ad loaded.');
-        },
-        onAdFailedToLoad: (error) {
-          debugPrint('Failed to load App Open Ad: $error');
-          _isAdAvailable = false;
-        },
-      ),
-    );
-  }
-
-  void setInterstitialAdDismissed() {
-    _interstitialAdDismissed = true;
-    debugPrint("Interstitial Ad dismissed, flag set.");
-  }
-
-  void setSplashInterstitialFlag(bool shown) {
-    _isSplashInterstitialShown = shown;
-  }
-
-  void maybeShowAppOpenAd() {
-    if (_isSplashInterstitialShown) {
-      debugPrint("### Skipping AppOpenAd due to splash interstitial.");
-      return;
-    }
+    WidgetsBinding.instance.addObserver(this);
+    initRemoteConfig();
   }
 
   @override
   void onClose() {
     WidgetsBinding.instance.removeObserver(this);
-    _appOpenAd?.dispose();
+    _currentAd?.dispose();
     super.onClose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      _resumeEligible = true;
+    } else if (state == AppLifecycleState.resumed) {
+      Future.delayed(const Duration(milliseconds: 80), () {
+        if (_resumeEligible) {
+          _displayAdIfAvailable();
+        }
+        _resumeEligible = false;
+      });
+    }
+  }
+
+  Future<void> initRemoteConfig() async {
+    try {
+      await RemoteConfigService().init();
+      final showAd = RemoteConfigService().getBool('AppOpenAd');
+      if (showAd) {
+        _loadAppOpenAd();
+      }
+    } catch (e) {
+      debugPrint("Failed to initialize remote config: $e");
+    }
+  }
+
+  void _displayAdIfAvailable() {
+    if (_canDisplayAd && _currentAd != null) {
+      _currentAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdShowedFullScreenContent: (_) {
+          isAdVisible.value = true;
+        },
+        onAdDismissedFullScreenContent: (_) {
+          _resetAd();
+        },
+        onAdFailedToShowFullScreenContent: (_, error) {
+          debugPrint("AppOpenAd error: $error");
+          _resetAd();
+        },
+      );
+      _currentAd!.show();
+      _resetAd();
+    } else {
+      debugPrint("AppOpenAd not ready or blocked.");
+      _loadAppOpenAd();
+    }
+  }
+
+  void _resetAd() {
+    _currentAd = null;
+    _canDisplayAd = false;
+    isAdVisible.value = false;
+  }
+
+  void _loadAppOpenAd() {
+    AppOpenAd.load(
+      adUnitId: _getAdUnitId(),
+      request: const AdRequest(),
+      adLoadCallback: AppOpenAdLoadCallback(
+        onAdLoaded: (ad) {
+          _currentAd = ad;
+          _canDisplayAd = true;
+        },
+        onAdFailedToLoad: (error) {
+          debugPrint("Failed to load AppOpenAd: $error");
+          _canDisplayAd = false;
+        },
+      ),
+    );
+  }
+
+  String _getAdUnitId() {
+    if (Platform.isAndroid) {
+      return 'ca-app-pub-3940256099942544/9257395921';
+    } else if (Platform.isIOS) {
+      return 'ca-app-pub-3940256099942544/5662855259';
+    } else {
+      throw UnsupportedError('Platform not supported');
+    }
   }
 }

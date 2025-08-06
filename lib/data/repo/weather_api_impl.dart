@@ -1,4 +1,4 @@
-import '../../domain/repositories/weather_repo.dart';
+import '/domain/repositories/weather_repo.dart';
 import '../data_source/online_data_sr.dart';
 import '../model/weather_model.dart';
 import '../model/forecast_model.dart';

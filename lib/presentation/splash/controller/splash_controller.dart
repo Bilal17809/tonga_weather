@@ -2,16 +2,13 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:tonga_weather/core/common/app_exceptions.dart';
-import 'package:tonga_weather/core/global/global_services/city_storage_service.dart';
-import 'package:tonga_weather/core/global/global_services/current_location_service.dart';
-import 'package:tonga_weather/core/global/global_services/load_cities_service.dart';
-import 'package:tonga_weather/core/global/global_services/load_weather_service.dart';
-import '../../../core/global/global_controllers/condition_controller.dart';
-import '../../../core/global/global_services/connectivity_service.dart';
-import '../../../core/local_storage/local_storage.dart';
-import '../../../domain/use_cases/get_current_weather.dart';
-import '../../../data/model/city_model.dart';
-import '../../home/controller/home_controller.dart';
+import 'package:tonga_weather/core/theme/app_colors.dart';
+import '/core/mixins/connectivity_mixin.dart';
+import '/core/services/services.dart';
+import '/core/local_storage/local_storage.dart';
+import '/domain/use_cases/use_case.dart';
+import '/data/model/city_model.dart';
+import '/presentation/home/controller/home_controller.dart';
 
 class SplashController extends GetxController with ConnectivityMixin {
   final GetWeatherAndForecast getCurrentWeather;
@@ -30,9 +27,7 @@ class SplashController extends GetxController with ConnectivityMixin {
     required this.loadWeatherService,
   });
 
-  ConditionController get conditionController =>
-      Get.find<ConditionController>();
-
+  final conditionController = Get.find<ConditionService>();
   final isLoading = true.obs;
   final isDataLoaded = false.obs;
   final allCities = <CityModel>[].obs;
@@ -42,7 +37,45 @@ class SplashController extends GetxController with ConnectivityMixin {
   final RxMap<String, dynamic> _rawDataStorage =
       <String, Map<String, dynamic>>{}.obs;
   final rawForecastData = <String, dynamic>{}.obs;
+  var visibleLetters = 0.obs;
+  var title = kOrange.obs;
+  final String _targetText = 'Real Time Tonga Forecast Updates';
+  bool _colorUpdate = true;
   var showButton = false.obs;
+  Timer? _flickerTimer;
+  Timer? _letterTimer;
+  final Color _color1 = kWhite;
+  final Color _color2 = kOrange;
+
+  @override
+  void onInit() {
+    super.onInit();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _startSloganAnimation();
+      _animateTitle();
+    });
+  }
+
+  void _animateTitle() {
+    _letterTimer?.cancel();
+    _letterTimer = Timer.periodic(const Duration(milliseconds: 80), (timer) {
+      if (visibleLetters.value < _targetText.length) {
+        visibleLetters.value++;
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  void _startSloganAnimation() {
+    title.value = _color1;
+    _flickerTimer?.cancel();
+
+    _flickerTimer = Timer.periodic(const Duration(milliseconds: 800), (_) {
+      title.value = _colorUpdate ? _color2 : _color1;
+      _colorUpdate = !_colorUpdate;
+    });
+  }
 
   @override
   void onReady() {
@@ -51,7 +84,7 @@ class SplashController extends GetxController with ConnectivityMixin {
       initWithConnectivityCheck(
         context: Get.context!,
         onConnected: () async {
-          await _initializeApp();
+          _initializeApp();
         },
       );
     });
@@ -125,7 +158,7 @@ class SplashController extends GetxController with ConnectivityMixin {
   CityModel? get chosenCity => selectedCity.value;
   bool get isFirstTime => isFirstLaunch.value;
   Map<String, dynamic> get rawWeatherData {
-    final key = selectedCity.value?.latLonKey ?? selectedCityName;
+    final key = LocationUtilsService.fromCityModel(selectedCity.value!);
     return _rawDataStorage[key] ?? {};
   }
 
@@ -134,9 +167,16 @@ class SplashController extends GetxController with ConnectivityMixin {
   }
 
   void _updateRawForecastDataForCurrentCity() {
-    final key = selectedCity.value?.latLonKey ?? selectedCityName;
+    final key = LocationUtilsService.fromCityModel(selectedCity.value!);
     if (_rawDataStorage.containsKey(key)) {
       rawForecastData.value = Map<String, dynamic>.from(_rawDataStorage[key]!);
     }
+  }
+
+  @override
+  void onClose() {
+    _flickerTimer?.cancel();
+    _letterTimer?.cancel();
+    super.onClose();
   }
 }
