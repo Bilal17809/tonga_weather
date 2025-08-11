@@ -18,6 +18,7 @@ class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
+
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
             .setMethodCallHandler { call, result ->
                 when (call.method) {
@@ -37,12 +38,10 @@ class MainActivity : FlutterActivity() {
                             result.error("UPDATE_ERROR", "Failed to update widget: ${e.message}", null)
                         }
                     }
-
                     "isWidgetActive" -> {
                         val isActive = isWidgetActive()
                         result.success(isActive)
                     }
-
                     "requestPinWidget" -> {
                         try {
                             val success = requestPinWidget()
@@ -51,7 +50,6 @@ class MainActivity : FlutterActivity() {
                             result.error("PIN_WIDGET_ERROR", "Failed to request widget pin: ${e.message}", null)
                         }
                     }
-
                     else -> {
                         result.notImplemented()
                     }
@@ -61,7 +59,6 @@ class MainActivity : FlutterActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-
         if (intent.action == "ACTION_FROM_WIDGET") {
             widgetLaunchDetected = true
         }
@@ -76,21 +73,22 @@ class MainActivity : FlutterActivity() {
         }
     }
 
+
     private fun updateAllWidgets(weatherData: Map<String, String>) {
         val context: Context = this
         val appWidgetManager = AppWidgetManager.getInstance(context)
-        val componentName = ComponentName(context, MyAppWidgetProvider::class.java)
+        val componentName = ComponentName(context, WeatherWidgetProvider::class.java)
         val appWidgetIds = appWidgetManager.getAppWidgetIds(componentName)
 
         for (appWidgetId in appWidgetIds) {
-            MyAppWidgetProvider.updateWidget(context, appWidgetManager, appWidgetId, weatherData)
+            WeatherWidgetProvider.updateWidget(context, appWidgetManager, appWidgetId, weatherData)
         }
     }
 
     private fun isWidgetActive(): Boolean {
         val context: Context = this
         val appWidgetManager = AppWidgetManager.getInstance(context)
-        val componentName = ComponentName(context, MyAppWidgetProvider::class.java)
+        val componentName = ComponentName(context, WeatherWidgetProvider::class.java)
         val appWidgetIds = appWidgetManager.getAppWidgetIds(componentName)
         return appWidgetIds.isNotEmpty()
     }
@@ -98,10 +96,8 @@ class MainActivity : FlutterActivity() {
     private fun requestPinWidget(): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val appWidgetManager = getSystemService(AppWidgetManager::class.java)
-
             if (appWidgetManager.isRequestPinAppWidgetSupported) {
-                val provider = ComponentName(this, MyAppWidgetProvider::class.java)
-
+                val provider = ComponentName(this, WeatherWidgetProvider::class.java)
                 val pinnedWidgetCallbackIntent = Intent(this, javaClass)
                 val successCallback = PendingIntent.getActivity(
                     this,
@@ -109,7 +105,6 @@ class MainActivity : FlutterActivity() {
                     pinnedWidgetCallbackIntent,
                     PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                 )
-
                 appWidgetManager.requestPinAppWidget(provider, null, successCallback)
                 return true
             } else {
@@ -121,4 +116,3 @@ class MainActivity : FlutterActivity() {
         return false
     }
 }
-

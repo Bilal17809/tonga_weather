@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/platform_channels/android_widget_channel.dart';
 import '/ads_manager/ads_manager.dart';
 import '/core/mixins/connectivity_mixin.dart';
 import '/core/services/services.dart';
@@ -55,6 +56,8 @@ class HomeController extends GetxController with ConnectivityMixin {
         _performAutoScroll();
       }
     });
+    WidgetUpdaterService.setupMethodChannelHandler();
+    WidgetUpdateManager.startPeriodicUpdate();
   }
 
   @override

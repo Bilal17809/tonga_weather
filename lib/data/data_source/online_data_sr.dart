@@ -39,7 +39,10 @@ class OnlineDataSource {
   }
 
   /// For Current Location
-  Future<String> getCity(double lat, double lon) async {
+  Future<(String city, String region)> getCityAndRegion(
+    double lat,
+    double lon,
+  ) async {
     final uri = Uri.parse(
       '${EnvironmentConfig.baseUrl}?key=$apiKey&q=$lat,$lon',
     );
@@ -47,10 +50,11 @@ class OnlineDataSource {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      final cityName = data['location']['name'] as String?;
+      final city = data['location']['name'] as String?;
+      final region = data['location']['region'] as String?;
 
-      if (cityName != null) {
-        return cityName;
+      if (city != null && region != null) {
+        return (city, region);
       } else {
         throw Exception(AppExceptions().noCityInApi);
       }

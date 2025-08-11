@@ -19,7 +19,7 @@ class GetWeatherAndForecast {
     return weatherRepo.getWeatherAndForecast(lat, lon);
   }
 
-  Future<String> getCity() async {
+  Future<(String city, String region)> getCity() async {
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       throw Exception(AppExceptions().deniedPermission);
@@ -47,6 +47,11 @@ class GetWeatherAndForecast {
 
     await storage.setString('latitude', position.latitude.toString());
     await storage.setString('longitude', position.longitude.toString());
-    return weatherRepo.getCity(position.latitude, position.longitude);
+
+    final data = await weatherRepo.getCityAndRegion(
+      position.latitude,
+      position.longitude,
+    );
+    return data;
   }
 }

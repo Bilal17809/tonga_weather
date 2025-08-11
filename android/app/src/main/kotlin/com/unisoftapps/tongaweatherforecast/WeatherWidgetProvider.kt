@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import java.net.URL
 import java.io.IOException
 
-class MyAppWidgetProvider : AppWidgetProvider() {
+class WeatherWidgetProvider : AppWidgetProvider() {
 
     companion object {
         fun updateWidget(
@@ -22,7 +22,7 @@ class MyAppWidgetProvider : AppWidgetProvider() {
             appWidgetId: Int,
             weatherData: Map<String, String>
         ) {
-            val views = RemoteViews(context.packageName, R.layout.my_widget_layout)
+            val views = RemoteViews(context.packageName, R.layout.widget_layout)
 
             val intent = Intent(context, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -38,7 +38,6 @@ class MyAppWidgetProvider : AppWidgetProvider() {
 
             views.setOnClickPendingIntent(R.id.widget_root, pendingIntent)
 
-            // 👉 Populate weather data
             views.setTextViewText(R.id.cityNameTextView, weatherData["cityName"] ?: "Unknown")
             views.setTextViewText(R.id.temperatureTextView, "${weatherData["temperature"] ?: "--"}°")
             views.setTextViewText(R.id.conditionTextView, weatherData["condition"] ?: "Loading...")

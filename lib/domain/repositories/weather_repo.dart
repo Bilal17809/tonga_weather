@@ -6,5 +6,5 @@ abstract class WeatherRepo {
     double lat,
     double lon,
   );
-  Future<String> getCity(double lat, double lon);
+  Future<(String city, String region)> getCityAndRegion(double lat, double lon);
 }

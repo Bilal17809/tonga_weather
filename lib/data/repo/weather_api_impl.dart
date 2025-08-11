@@ -18,7 +18,7 @@ class WeatherApiImpl implements WeatherRepo {
 
   /// For Current Location
   @override
-  Future<String> getCity(double lat, double lon) async {
-    return await onlineDataSource.getCity(lat, lon);
+  Future<(String, String)> getCityAndRegion(double lat, double lon) {
+    return onlineDataSource.getCityAndRegion(lat, lon);
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/platform_channels/android_widget_channel.dart';
 import '/core/mixins/connectivity_mixin.dart';
 import '/core/services/services.dart';
 import '/ads_manager/ads_manager.dart';
@@ -73,6 +74,7 @@ class CitiesController extends GetxController with ConnectivityMixin {
       onConnected: () async {
         splashController.selectedCity.value = city;
         await splashController.cityStorageService.saveSelectedCity(city);
+        WidgetUpdateManager.updateWeatherWidget();
       },
     );
   }
