@@ -1,0 +1,43 @@
+{
+  "parameters": {
+    "BannerAd": {
+      "defaultValue": {
+        "value": "true"
+      },
+      "valueType": "BOOLEAN"
+    },
+    "InterstitialAd": {
+      "defaultValue": {
+        "value": "3"
+      },
+      "valueType": "STRING"
+    },
+    "AppOpenAd": {
+      "defaultValue": {
+        "value": "true"
+      },
+      "valueType": "BOOLEAN"
+    },
+    "SplashInterstitial": {
+      "defaultValue": {
+        "value": "true"
+      },
+      "valueType": "BOOLEAN"
+    },
+    "NativeAdvAd": {
+      "defaultValue": {
+        "value": "true"
+      },
+      "valueType": "BOOLEAN"
+    }
+  },
+  "version": {
+    "versionNumber": "1",
+    "updateTime": "2025-08-06T05:29:31.221724Z",
+    "updateUser": {
+      "email": "unisoftaps@gmail.com"
+    },
+    "updateOrigin": "CONSOLE",
+    "updateType": "INCREMENTAL_UPDATE"
+  }
+}
