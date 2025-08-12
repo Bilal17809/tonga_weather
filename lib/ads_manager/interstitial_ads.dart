@@ -43,7 +43,7 @@ class InterstitialAdManager extends GetxController {
       );
       final newThreshold = RemoteConfigService().getInt(
         'InterstitialAd',
-        'ca-app-pub-5405847310750111/1711384875',
+        'InterstitialAd',
       );
       if (newThreshold > 0) {
         displayThreshold = newThreshold;

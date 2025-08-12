@@ -33,7 +33,7 @@ class SplashInterstitialAdController extends GetxController {
       if (Platform.isAndroid) {
         interstitialKey = 'SplashInterstitial';
       } else if (Platform.isIOS) {
-        interstitialKey = '';
+        interstitialKey = 'SplashInterstitial';
       } else {
         throw UnsupportedError('Unsupported platform');
       }

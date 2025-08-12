@@ -3,7 +3,6 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import '/core/services/services.dart';
 
 class AppOpenAdController extends GetxController with WidgetsBindingObserver {
   final RxBool isShowingOpenAd = false.obs;
@@ -50,7 +49,7 @@ class AppOpenAdController extends GetxController with WidgetsBindingObserver {
       if (Platform.isAndroid) {
         remoteConfigKey = 'AppOpenAd';
       } else if (Platform.isIOS) {
-        remoteConfigKey = '';
+        remoteConfigKey = 'AppOpenAd';
       } else {
         throw UnsupportedError('Unsupported platform');
       }

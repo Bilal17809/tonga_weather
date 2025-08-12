@@ -32,7 +32,7 @@ class BannerAdManager extends GetxController {
   Future<void> initRemoteConfig() async {
     try {
       await RemoteConfigService().init();
-      final showBanner = RemoteConfigService().getBool('BannerAd');
+      final showBanner = RemoteConfigService().getBool('BannerAd', 'BannerAd');
       isBannerAdEnabled.value = showBanner;
 
       if (showBanner) {

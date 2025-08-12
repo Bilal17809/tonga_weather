@@ -21,19 +21,30 @@ class RemoteConfigService {
     await _remoteConfig.fetchAndActivate();
   }
 
-  bool getBool(String androidKey) {
-    final key = androidKey;
-    if (key.isEmpty) throw UnsupportedError('Platform not supported');
-    return _remoteConfig.getBool(key) || true;
+  bool getBool(String androidKey, String iosKey) {
+    final key = _selectPlatformKey(androidKey, iosKey);
+    return _remoteConfig.getBool(key);
   }
 
   int getInt(String androidKey, String iosKey) {
-    final key = Platform.isAndroid
-        ? androidKey
-        : Platform.isIOS
-        ? iosKey
-        : '';
-    if (key.isEmpty) throw UnsupportedError('Platform not supported');
+    final key = _selectPlatformKey(androidKey, iosKey);
     return _remoteConfig.getInt(key);
+  }
+
+  String getString(String androidKey, String iosKey) {
+    final key = _selectPlatformKey(androidKey, iosKey);
+    return _remoteConfig.getString(key);
+  }
+
+  String _selectPlatformKey(String androidKey, String iosKey) {
+    if (Platform.isAndroid) {
+      if (androidKey.isEmpty) throw UnsupportedError('Android key missing');
+      return androidKey;
+    } else if (Platform.isIOS) {
+      if (iosKey.isEmpty) throw UnsupportedError('iOS key missing');
+      return iosKey;
+    } else {
+      throw UnsupportedError('Platform not supported');
+    }
   }
 }
