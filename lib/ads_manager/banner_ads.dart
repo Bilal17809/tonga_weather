@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shimmer/shimmer.dart';
+import '../presentation/remove_ads_contrl/remove_ads_contrl.dart';
 import '/core/services/services.dart';
 import '/core/theme/theme.dart';
 import 'app_open_ads.dart';
@@ -12,6 +13,7 @@ class BannerAdManager extends GetxController {
   final _adStatusMap = <String, RxBool>{};
   final isBannerAdEnabled = true.obs;
   final AppOpenAdController appOpenAdManager = Get.put(AppOpenAdController());
+  final RemoveAds removeAdsController = Get.put(RemoveAds());
 
   @override
   onInit() {
@@ -34,7 +36,6 @@ class BannerAdManager extends GetxController {
       await RemoteConfigService().init();
       final showBanner = RemoteConfigService().getBool('BannerAd', 'BannerAd');
       isBannerAdEnabled.value = showBanner;
-
       if (showBanner) {
         for (int i = 1; i <= 5; i++) {
           loadBannerAd('ad$i');
@@ -70,6 +71,9 @@ class BannerAdManager extends GetxController {
   }
 
   Widget showBannerAd(String key) {
+    if (Platform.isIOS && removeAdsController.isSubscribedGet.value) {
+      return SizedBox();
+    }
     final ad = _adInstances[key];
     final isLoaded = _adStatusMap[key]?.value ?? false;
 

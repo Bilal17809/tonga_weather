@@ -14,7 +14,7 @@ import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 final bool _kAutoConsume = Platform.isIOS || true;
 const String _kConsumableId = 'consumable';
 const String _kUpgradeId = 'upgrade';
-const String _kSilverSubscriptionId = '';
+const String _kSilverSubscriptionId = 'com.tongaweather.removeads';
 const List<String> _kProductIds = <String>[
   _kConsumableId,
   _kUpgradeId,
@@ -602,7 +602,7 @@ class PremiumBody extends StatelessWidget {
                     right: width * 0.08,
                     top: height * 0.36,
                     child: const Text(
-                      "Forecast Without Limits",
+                      "Get Unlimited Access",
                       style: TextStyle(
                         color: Colors.blue,
                         fontSize: 28,
@@ -628,7 +628,7 @@ class PremiumBody extends StatelessWidget {
                     left: width * 0.20,
                     right: width * 0.20,
                     child: Image.asset(
-                      'images/splash-icon.png',
+                      'images/premiumpic.png',
                       height: height * 0.34,
                       fit: BoxFit.contain,
                     ),
@@ -638,7 +638,7 @@ class PremiumBody extends StatelessWidget {
                   Positioned(
                     left: width * 0.65,
                     right: width * 0.01,
-                    top: height * 0.67,
+                    top: height * 0.69,
                     child: Image.asset(
                       "images/offer.png",
                       height: 64,

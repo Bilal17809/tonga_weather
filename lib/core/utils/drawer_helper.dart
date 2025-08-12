@@ -19,7 +19,7 @@ class DrawerActions {
     const androidUrl =
         'https://play.google.com/store/apps/details?id=com.unisoftapps.tongaweatherforecast';
     const iosUrl =
-        'https://apps.apple.com/us/app/Estonia Weather Forecast/6748671693';
+        'https://apps.apple.com/us/app/Tonga Weather Forecast/6749609670';
 
     final url = Platform.isIOS ? iosUrl : androidUrl;
 

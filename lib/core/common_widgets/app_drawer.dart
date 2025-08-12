@@ -71,7 +71,7 @@ class AppDrawer extends StatelessWidget {
             ),
             if (Platform.isIOS) ...[
               DrawerTile(
-                icon: Icons.star_rounded,
+                icon: Icons.workspace_premium_outlined,
                 title: 'Remove Ads',
                 onTap: () {
                   Get.to(PremiumScreen());

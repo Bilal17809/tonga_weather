@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import '../presentation/remove_ads_contrl/remove_ads_contrl.dart';
+
 class AppOpenAdController extends GetxController with WidgetsBindingObserver {
   final RxBool isShowingOpenAd = false.obs;
-  // final RemoveAds removeAdsController = Get.put(RemoveAds());
+  final RemoveAds removeAdsController = Get.put(RemoveAds());
 
   AppOpenAd? _appOpenAd;
   bool _isAdAvailable = false;
@@ -109,9 +111,9 @@ class AppOpenAdController extends GetxController with WidgetsBindingObserver {
   }
 
   void loadAd() {
-    // if (Platform.isIOS && removeAdsController.isSubscribedGet.value) {
-    //   return;
-    // }
+    if (Platform.isIOS && removeAdsController.isSubscribedGet.value) {
+      return;
+    }
     if (!shouldShowAppOpenAd) return;
     AppOpenAd.load(
       adUnitId: appOpenAdUnitId,

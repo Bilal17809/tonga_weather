@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import '../presentation/remove_ads_contrl/remove_ads_contrl.dart';
 import '/core/services/services.dart';
 
 class InterstitialAdManager extends GetxController {
@@ -10,6 +11,8 @@ class InterstitialAdManager extends GetxController {
   var isShow = false.obs;
   int visitCounter = 0;
   late int displayThreshold;
+  final RemoveAds removeAdsController = Get.put(RemoveAds());
+
 
   @override
   void onInit() {
@@ -94,9 +97,11 @@ class InterstitialAdManager extends GetxController {
   }
 
   void checkAndDisplayAd() {
+    if (Platform.isIOS && removeAdsController.isSubscribedGet.value) {
+      return;
+    }
     visitCounter++;
     debugPrint("Visit count: $visitCounter");
-
     if (visitCounter >= displayThreshold) {
       if (_isAdReady) {
         _showAd();
