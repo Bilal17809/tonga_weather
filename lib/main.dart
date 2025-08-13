@@ -7,6 +7,7 @@ import 'package:tonga_weather/core/services/aqi_service.dart';
 import 'package:tonga_weather/core/services/onesignal.dart';
 import 'package:tonga_weather/presentation/splash/view/splash_view.dart';
 import '/ads_manager/ads_manager.dart';
+import 'ads_manager/native_ads.dart';
 import 'core/binders/dependency_injection.dart';
 import 'core/local_storage/local_storage.dart';
 import '/core/theme/theme.dart';
@@ -17,6 +18,7 @@ void main() async {
   MobileAds.instance.initialize();
   await AqiService.initialize();
   Get.put(AppOpenAdController());
+  Get.put(NativeAdMeduimController());
   DependencyInjection.init();
   OnesignalService.init();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);

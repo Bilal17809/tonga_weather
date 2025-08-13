@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:panara_dialogs/panara_dialogs.dart';
+import '../../../ads_manager/native_ads.dart';
 import '/ads_manager/ads_manager.dart';
 import '/core/animation/view/animated_bg_builder.dart';
 import '/core/theme/theme.dart';
@@ -11,12 +12,25 @@ import '/presentation/home/view/widgets/weather_header.dart';
 import '/core/common_widgets/app_drawer.dart';
 import '/core/global_keys/global_key.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({super.key});
 
   @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  final homeController = Get.find<HomeController>();
+
+  @override
+  void initState() {
+    homeController.requestTrackingPermission();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final homeController = Get.find<HomeController>();
+    final nativeAds=Get.find<NativeAdMeduimController>();
 
     return PopScope(
       canPop: false,
@@ -34,18 +48,24 @@ class HomeView extends StatelessWidget {
         body: Stack(
           children: [
             AnimatedBgImageBuilder(),
-            Column(children: const [WeatherHeader(), WeatherBody()]),
+            Column(children: [
+              const WeatherHeader(),
+              if(nativeAds.isAdReady)...[
+                nativeAds.nativeAdWidget(),
+              ],
+              const WeatherBody()]
+            ),
           ],
         ),
-        bottomNavigationBar: Obx(() {
-          final interstitial = Get.find<InterstitialAdManager>();
-          final isDrawerOpen = homeController.isDrawerOpen.value;
-          if (!isDrawerOpen && !interstitial.isShow.value) {
-            return Get.find<BannerAdManager>().showBannerAd('ad1');
-          } else {
-            return const SizedBox();
-          }
-        }),
+        // bottomNavigationBar: Obx(() {
+        //   final interstitial = Get.find<InterstitialAdManager>();
+        //   final isDrawerOpen = homeController.isDrawerOpen.value;
+        //   if (!isDrawerOpen && !interstitial.isShow.value) {
+        //     return Get.find<BannerAdManager>().showBannerAd('ad1');
+        //   } else {
+        //     return const SizedBox();
+        //   }
+        // }),
       ),
     );
   }

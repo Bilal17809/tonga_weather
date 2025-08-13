@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tonga_weather/presentation/splash/controller/splash_controller.dart';
 import 'package:tonga_weather/core/common_widgets/common_widgets.dart';
+import '../../../../ads_manager/native_ads.dart';
 import '/core/constants/constant.dart';
 import '/core/theme/theme.dart';
 import '/presentation/daily_forecast/view/daily_forecast_view.dart';

@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/platform_channels/android_widget_channel.dart';
@@ -108,6 +110,31 @@ class HomeController extends GetxController with ConnectivityMixin {
       await Future.delayed(const Duration(milliseconds: 50));
     }
     selectedCity.value = city;
+  }
+
+  Future<void> requestTrackingPermission() async {
+    if (!Platform.isIOS) {
+      return;
+    }
+    final trackingStatus =
+    await AppTrackingTransparency.requestTrackingAuthorization();
+
+    switch (trackingStatus) {
+      case TrackingStatus.notDetermined:
+        print('User has not yet decided');
+        break;
+      case TrackingStatus.denied:
+        print('User denied tracking');
+        break;
+      case TrackingStatus.authorized:
+        print('User granted tracking permission');
+        break;
+      case TrackingStatus.restricted:
+        print('Tracking restricted');
+        break;
+      default:
+        print('Unknown tracking status');
+    }
   }
 
   List<CityModel> get allCities => splashController.allCities;
