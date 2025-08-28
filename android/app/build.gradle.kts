@@ -17,7 +17,7 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace = "com.unisoftapps.tongaweatherforecast"
     compileSdk = 36
-    ndkVersion = "28.0.12916984"
+    ndkVersion = "28.2.13676358"
 
     signingConfigs {
         create("release") {
@@ -30,7 +30,7 @@ android {
 
     defaultConfig {
         applicationId = "com.unisoftapps.tongaweatherforecast"
-        minSdk = 23
+        minSdkVersion(24)
         targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
