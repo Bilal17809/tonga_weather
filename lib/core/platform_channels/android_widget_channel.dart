@@ -12,7 +12,7 @@ class WidgetUpdateManager {
     _timer?.cancel();
     if (!await WidgetUpdaterService.isWidgetActive()) return;
     updateWeatherWidget();
-    _timer = Timer.periodic(const Duration(minutes: 10), (_) {
+    _timer = Timer.periodic(const Duration(minutes: 15), (_) {
       updateWeatherWidget();
     });
   }
@@ -55,7 +55,7 @@ class WidgetUpdateManager {
 
 class WidgetUpdaterService {
   static const _channel = MethodChannel(
-    'com.unisoftapps.tongaweatherforecast/widget',
+    'com.unisoftaps.tongaweatherforecast/widget',
   );
   static Future<void> updateWidget(Map<String, String> data) async {
     try {
@@ -68,6 +68,12 @@ class WidgetUpdaterService {
   static Future<void> requestPinWidget() async {
     try {
       await _channel.invokeMethod('requestPinWidget');
+      Timer.periodic(const Duration(seconds: 2), (timer) async {
+        if (await isWidgetActive()) {
+          WidgetUpdateManager.startPeriodicUpdate();
+          timer.cancel();
+        }
+      });
     } catch (e) {
       debugPrint("Error requesting widget pin: $e");
     }
@@ -88,8 +94,6 @@ class WidgetUpdaterService {
           debugPrint("Widget tapped => Triggering update...");
           WidgetUpdateManager.startPeriodicUpdate();
           break;
-        default:
-          debugPrint("Unhandled method: ${call.method}");
       }
     });
   }

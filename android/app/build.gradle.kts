@@ -58,6 +58,7 @@ apply(plugin = "com.google.firebase.crashlytics")
 
 dependencies {
     implementation("com.google.android.gms:play-services-ads:24.4.0")
+    implementation("com.google.android.gms:play-services-location:21.2.0")
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-crashlytics")
 }

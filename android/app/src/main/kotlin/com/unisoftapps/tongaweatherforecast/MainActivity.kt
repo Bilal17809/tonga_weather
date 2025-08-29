@@ -12,12 +12,11 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
-    private val CHANNEL = "com.unisoftapps.tongaweatherforecast/widget"
+    private val CHANNEL = "com.unisoftaps.tongaweatherforecast/widget"
     private var widgetLaunchDetected = false
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-
 
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
             .setMethodCallHandler { call, result ->
@@ -72,7 +71,6 @@ class MainActivity : FlutterActivity() {
             widgetLaunchDetected = false
         }
     }
-
 
     private fun updateAllWidgets(weatherData: Map<String, String>) {
         val context: Context = this
